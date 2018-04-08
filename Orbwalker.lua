@@ -60,7 +60,8 @@ class "__gsoOrbwalker"
                         gsoLastAttackLocal = 0
                 end
                 -- CHECK IF CAN ORBWALK
-                if not _G.gsoSDK.Cursor:IsCursorReady() or Game.IsChatOpen() or (ExtLibEvade and ExtLibEvade.Evading) then
+                local isEvading = ExtLibEvade and ExtLibEvade.Evading
+                if not _G.gsoSDK.Cursor:IsCursorReady() or Game.IsChatOpen() or isEvading then
                         return
                 end
                 -- ORBWALKER MODE
