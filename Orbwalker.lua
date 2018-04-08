@@ -1,6 +1,9 @@
 local gsoIsTeemo = false
 local gsoIsBlindedByTeemo = false
 local gsoLastAttack = 0
+local gsoMenu = nil
+local gsoDrawMenuMe = nil
+local gsoDrawMenuHe = nil
 
 local function gsoCheckTeemoBlind()
         for i = 0, gsoMyHero.buffCount do
@@ -22,9 +25,48 @@ class "__gsoOrbwalker"
                 if gsoIsTeemo then gsoIsBlindedByTeemo = gsoCheckTeemoBlind() end
         end
         
+        function __gsoOrbwalker:CreateMenu(menu)
+                gsoMenu = menu:MenuElement({name = "Orbwalker", id = "orb", type = MENU, leftIcon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/orb.png" })
+                        gsoMenu:MenuElement({name = "Delays", id = "delays", type = MENU})
+                                gsoMenu.delays:MenuElement({name = "Extra Kite Delay", id = "windup", value = 0, min = -50, max = 50, step = 1 })
+                                gsoMenu.delays:MenuElement({name = "Extra LastHit Delay", id = "lhDelay", value = 0, min = -50, max = 50, step = 1 })
+                                gsoMenu.delays:MenuElement({name = "Extra Move Delay", id = "humanizer", value = 200, min = 120, max = 300, step = 10 })
+                        gsoMenu:MenuElement({name = "Keys", id = "keys", type = MENU})
+                                gsoMenu.keys:MenuElement({name = "Combo Key", id = "combo", key = string.byte(" ")})
+                                gsoMenu.keys:MenuElement({name = "Harass Key", id = "harass", key = string.byte("C")})
+                                gsoMenu.keys:MenuElement({name = "LastHit Key", id = "lasthit", key = string.byte("X")})
+                                gsoMenu.keys:MenuElement({name = "LaneClear Key", id = "laneclear", key = string.byte("V")})
+        end
+        
+        function __gsoOrbwalker:CreateDrawMenu(menu)
+                gsoDrawMenuMe = menu:MenuElement({name = "MyHero Attack Range", id = "me", type = MENU})
+                        gsoDrawMenuMe:MenuElement({name = "Enabled",  id = "enabled", value = true})
+                        gsoDrawMenuMe:MenuElement({name = "Color",  id = "color", color = gsoDrawColor(150, 49, 210, 0)})
+                        gsoDrawMenuMe:MenuElement({name = "Width",  id = "width", value = 1, min = 1, max = 10})
+                gsoDrawMenuHe = menu:MenuElement({name = "Enemy Attack Range", id = "he", type = MENU})
+                        gsoDrawMenuHe:MenuElement({name = "Enabled",  id = "enabled", value = true})
+                        gsoDrawMenuHe:MenuElement({name = "Color",  id = "color", color = gsoDrawColor(150, 255, 0, 0)})
+                        gsoDrawMenuHe:MenuElement({name = "Width",  id = "width", value = 1, min = 1, max = 10})
+        end
+        
         function __gsoOrbwalker:WndMsg(msg, wParam)
                 if wParam == HK_TCO then
                         gsoLastAttack = Game.Timer()
+                end
+        end
+        
+        function __gsoOrbwalker:Draw()
+                if gsoDrawMenuMe.enabled:Value() and myHero.pos:ToScreen().onScreen then
+                        Draw.Circle(myHero.pos, myHero.range + myHero.boundingRadius + 35, gsoDrawMenuMe.width:Value(), gsoDrawMenuMe.color:Value())
+                end
+                if gsoDrawMenuHe.enabled:Value() then
+                        local enemyHeroes = _G.gsoSDK.ObjectManager:GetEnemyHeroes(99999999, false, "immortal")
+                        for i = 1, #enemyHeroes do
+                                local enemy = enemyHeroes[i]
+                                if enemy.pos:ToScreen().onScreen then
+                                        Draw.Circle(enemy.pos, enemy.range + enemy.boundingRadius + 35, gsoDrawMenuHe.width:Value(), gsoDrawMenuHe.color:Value())
+                                end
+                        end
                 end
         end
 

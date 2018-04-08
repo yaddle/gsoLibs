@@ -45,13 +45,13 @@ class "__gsoTS"
         
         function __gsoTS:CreateMenu(menu)
                 gsoMenu = menu:MenuElement({name = "Target Selector", id = "ts", type = MENU, leftIcon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/ts.png" })
-                gsoMenu:MenuElement({ id = "Mode", name = "Mode", value = 1, drop = { "Auto", "Closest", "Least Health", "Least Priority" } })
-                gsoMenu:MenuElement({ id = "priority", name = "Priorities", type = MENU })
-                        _G.gsoSDK.ObjectManager:OnEnemyHeroLoad(function(hero) gsoCreatePriorityMenu(hero.charName) end)
-                gsoMenu:MenuElement({ id = "selected", name = "Selected Target", type = MENU })
-                        gsoMenu.selected:MenuElement({ id = "enable", name = "Enable", value = true })
-                gsoMenu:MenuElement({name = "LaneClear", id = "laneset", type = MENU})
-                        gsoMenu.laneset:MenuElement({ id = "enabledhar", name = "Harass enabled", value = true })
+                        gsoMenu:MenuElement({ id = "Mode", name = "Mode", value = 1, drop = { "Auto", "Closest", "Least Health", "Least Priority" } })
+                        gsoMenu:MenuElement({ id = "priority", name = "Priorities", type = MENU })
+                                _G.gsoSDK.ObjectManager:OnEnemyHeroLoad(function(hero) gsoCreatePriorityMenu(hero.charName) end)
+                        gsoMenu:MenuElement({ id = "selected", name = "Selected Target", type = MENU })
+                                gsoMenu.selected:MenuElement({ id = "enable", name = "Enable", value = true })
+                        gsoMenu:MenuElement({name = "LaneClear", id = "laneset", type = MENU})
+                                gsoMenu.laneset:MenuElement({ id = "enabledhar", name = "Harass enabled", value = true })
         end
         
         function __gsoTS:CreateDrawMenu(menu)

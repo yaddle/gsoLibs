@@ -12,6 +12,7 @@ _G.gsoSDK = {}
 class "__gsoLibLoader"
         
         function __gsoLibLoader:__init(menu)
+                -- LOAD LIBS
                 require "gsoLibs\\Utilities"
                 _G.gsoSDK.Utilities = __gsoUtilities()
                 require "gsoLibs\\Cursor"
@@ -23,11 +24,16 @@ class "__gsoLibLoader"
                 require "gsoLibs\\TS"
                 _G.gsoSDK.TS = __gsoTS()
                 -----------------------------------------------------------
+                -- MENU
                 _G.gsoSDK.TS:CreateMenu(menu)
+                 _G.gsoSDK.Orbwalker:CreateMenu(menu)
                 menu:MenuElement({name = "Drawings", id = "gsodraw", leftIcon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/circles.png", type = MENU })
                 menu.gsodraw:MenuElement({name = "Enabled",  id = "enabled", value = true})
                 _G.gsoSDK.TS:CreateDrawMenu(menu.gsodraw)
                 _G.gsoSDK.Cursor:CreateDrawMenu(menu.gsodraw)
+                _G.gsoSDK.Orbwalker:CreateDrawMenu(menu.gsodraw)
+                -----------------------------------------------------------
+                -- DISABLE ORBWALKERS
                 _G.gsoSDK.Utilities:AddAction(function()
                         if _G.Orbwalker then
                                 GOS.BlockMovement = true
@@ -56,9 +62,11 @@ class "__gsoLibLoader"
         
         function __gsoLibLoader:WndMsg(msg, wParam)
                 _G.gsoSDK.TS:WndMsg(msg, wParam)
+                _G.gsoSDK.Orbwalker:WndMsg(msg, wParam)
         end
         
         function __gsoLibLoader:Draw()
                  _G.gsoSDK.TS:Draw()
                  _G.gsoSDK.Cursor:Draw()
+                 _G.gsoSDK.Orbwalker:Draw()
         end
