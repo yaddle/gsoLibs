@@ -1,5 +1,7 @@
 
 local gsoActiveAttacks = {}
+local gsoShouldWait = false
+local gsoShouldWaitTime = 0
 
 local function gsoPredPos(speed, pPos, unit)
         if unit.pathing.hasMovePath then
@@ -46,16 +48,31 @@ local function gsoUpdateActiveAttacks()
 end
 
 class "__gsoFarm"
+
+        function __gsoFarm:SetLastHitable(enemyMinion, time, damage, mode, allyMinions)
+                if mode == "fast" then
+                        local hpPred = self:MinionHpPredFast(enemyMinion, allyMinions, time)
+                        local lastHitable = hpPred - damage < 0
+                        local almostLastHitable = lastHitable and false or self:MinionHpPredFast(enemyMinion, allyMinions, myHero.attackData.animationTime * 3) - damage < 0
+                        if almostLastHitable then
+                                gsoShouldWait = true
+                                gsoShouldWaitTime = Game.Timer()
+                        end
+                        return { LastHitable =  lastHitable, Unkillable = hpPred < 0, AlmostLastHitable = almostLastHitable, PredictedHP = hpPred, Minion = enemyMinion }
+                elseif mode == "accuracy" then
+                        local hpPred = self:MinionHpPredAccuracy(enemyMinion, time)
+                        local lastHitable = hpPred - damage < 0
+                        local almostLastHitable = lastHitable and false or self:MinionHpPredFast(enemyMinion, allyMinions, myHero.attackData.animationTime * 3) - damage < 0
+                        if almostLastHitable then
+                                gsoShouldWait = true
+                                gsoShouldWaitTime = Game.Timer()
+                        end
+                        return { LastHitable =  lastHitable, Unkillable = hpPred < 0, AlmostLastHitable = almostLastHitable, PredictedHP = hpPred, Minion = enemyMinion }
+                end
+        end
         
-        --local flyTime = myHero.attackData.windUpTime + ( myHero.pos:DistanceTo(enemyMinion.pos) / myHero.attackData.projectileSpeed )
-        function __gsoFarm:IsLastHitable(enemyMinion, allyMinions, time, damage, mode)
-                if mode == "fast" and self:MinionHpPredFast(enemyMinion, allyMinions, time) - damage < 0 then
-                        return true
-                end
-                if mode == "accuracy" and self:MinionHpPredAccuracy(enemyMinion, time) - damage < 0 then
-                        return true
-                end
-                return false
+        function __gsoFarm:CanLaneClear()
+                  return not gsoShouldWait
         end
         
         function __gsoFarm:MinionHpPredFast(unit, allyMinions, time)
@@ -70,6 +87,7 @@ class "__gsoFarm"
                                         unitHealth = unitHealth - allyMinion.Dmg
                                         endTime = endTime + allyMinion.attackData.animationTime + flyTime
                                 end
+                                return unitHealth
                         end
                 end
                 return unitHealth
@@ -141,6 +159,9 @@ class "__gsoFarm"
                         end
                 end
                 gsoUpdateActiveAttacks()
+                if gsoShouldWait and Game.Timer() > gsoShouldWaitTime + 0.5 then
+                        gsoShouldWait = false
+                end
         end
 
 

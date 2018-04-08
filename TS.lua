@@ -3,6 +3,7 @@ local gsoSelectedTarget = nil
 local gsoLastSelTick = 0
 local gsoLastHeroTarget = nil
 local gsoLastMinionLastHit = nil
+local gsoLastHitableMinions = {}
 local gsoPriorities = {
         ["Aatrox"] = 3, ["Ahri"] = 2, ["Akali"] = 2, ["Alistar"] = 5, ["Amumu"] = 5, ["Anivia"] = 2, ["Annie"] = 2, ["Ashe"] = 1, ["AurelionSol"] = 2, ["Azir"] = 2,
         ["Bard"] = 3, ["Blitzcrank"] = 5, ["Brand"] = 2, ["Braum"] = 5, ["Caitlyn"] = 1, ["Camille"] = 3, ["Cassiopeia"] = 2, ["Chogath"] = 5, ["Corki"] = 1,
@@ -32,7 +33,6 @@ local function gsoCreatePriorityMenu(charName)
         local priority = gsoPriorities[charName] ~= nil and gsoPriorities[charName] or 5
         gsoMenu.priority:MenuElement({ id = charName, name = charName, value = priority, min = 1, max = 5, step = 1 })
 end
-
 
 class "__gsoTS"
         
@@ -101,10 +101,21 @@ class "__gsoTS"
                 end
                 return comboT
         end
-
-        function __gsoTS:GetLastHitTarget()
+        
+        --enemyMinions = _G.gsoSDK.ObjectManager:GetEnemyMinions(myHero.attackRange+myHero.boundingRadius, true)
+        
+        function __gsoTS:GetLastHitTarget(enemyMinions, mode, allyMinions)
                 local min = 10000000
-                local lastHitable = gsoFarm.lastHitable
+                local result = nil
+                for i = 1, #enemyMinions do
+                        local enemyMinion = enemyMinions[i]
+                        local FlyTime = myHero.attackData.windUpTime + ( myHero.pos:DistanceTo(enemyMinion.pos) / myHero.attackData.projectileSpeed )
+                        if _G.gsoSDK.Farm:IsLastHitable(enemyMinion, FlyTime, myHero.totalDamage, mode, allyMinions) then
+                                lastHitable[#lastHitable+1] = enemyMinion
+                        end
+                end
+                local lastHitable = _G.gsoSDK.ObjectManager:GetEnemyMinions(myHero.attackRange+myHero.boundingRadius, true)
+                gsoFarm.lastHitable
                 local meRange = myHero.range + myHero.boundingRadius
                 local lastHitTarget = nil
                 local mePos = myHero.pos
@@ -172,6 +183,17 @@ class "__gsoTS"
                         end
                 end
                 return result
+        end
+        
+        function __gsoTS:Tick()
+                local enemyMinions = _G.gsoSDK.ObjectManager:GetEnemyMinions(myHero.attackRange + myHero.boundingRadius, true)
+                local allyMinions = _G.gsoSDK.ObjectManager:GetAllyMinions(1500, false)
+                local lastHitMode = "accuracy"
+                for i = 1, #enemyMinions do
+                        local enemyMinion = enemyMinions[i]
+                        local FlyTime = myHero.attackData.windUpTime + ( myHero.pos:DistanceTo(enemyMinion.pos) / myHero.attackData.projectileSpeed )
+                        gsoLastHitableMinions[#gsoLastHitableMinions+1] = _G.gsoSDK.Farm:SetLastHitable(enemyMinion, FlyTime, myHero.totalDamage, lastHitMode, allyMinions)
+                end
         end
         
         function __gsoTS:WndMsg(msg, wParam)
