@@ -29,7 +29,7 @@ class "__gsoCursor"
                                 gsoSetCursorPos.Action()
                                 gsoSetCursorPos.Active = false
                                 gsoExtraSetCursor = nil
-                        elseif not gsoSetCursorPos.Active and Game.Timer() > gsoSetCursorPos.EndTime + 25 then
+                        elseif not gsoSetCursorPos.Active and Game.Timer() > gsoSetCursorPos.EndTime + 0.025 then
                                 gsoCursorReady = true
                                 gsoSetCursorPos = nil
                         end

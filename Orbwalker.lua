@@ -1,9 +1,16 @@
 local gsoIsTeemo = false
 local gsoIsBlindedByTeemo = false
-local gsoLastAttack = 0
+local gsoLastAttackLocal = 0
+local gsoLastAttackServer = 0
+local gsoLastMoveLocal = 0
 local gsoMenu = nil
 local gsoDrawMenuMe = nil
 local gsoDrawMenuHe = nil
+local gsoAttackEndTime = 0
+local gsoLastMouseDown = 0
+local gsoLastMovePos = myHero.pos
+local gsoResetAttack = false
+local gsoLastTarget = nil
 
 local function gsoCheckTeemoBlind()
         for i = 0, gsoMyHero.buffCount do
@@ -23,6 +30,77 @@ class "__gsoOrbwalker"
         
         function __gsoOrbwalker:Tick()
                 if gsoIsTeemo then gsoIsBlindedByTeemo = gsoCheckTeemoBlind() end
+                -- SERVER ATTACK START TIME
+                if myHero.attackData.endTime > gsoAttackEndTime then
+                        gsoLastAttackServer = Game.Timer()
+                end
+                -- CHECK IF CAN ORBWALK
+                if not _G.gsoSDK.Cursor:IsCursorReady() or Game.IsChatOpen() or (ExtLibEvade and ExtLibEvade.Evading) then
+                        return
+                end
+                -- ORBWALKER MODE
+                if gsoMenu.keys.combo:Value() then
+                        self:AttackMove(_G.gsoSDK.TS:GetComboTarget())
+                elseif gsoMenu.keys.harass:Value() then
+                        if _G.gsoSDK.Farm:CanLastHit() then
+                                self:AttackMove(_G.gsoSDK.TS:GetLastHitTarget())
+                        else
+                                self:AttackMove(_G.gsoSDK.TS:GetComboTarget())
+                        end
+                elseif gsoMenu.keys.lasthit:Value() then
+                        self:AttackMove(_G.gsoSDK.TS:GetLastHitTarget())
+                elseif gsoMenu.keys.laneclear:Value() then
+                        if _G.gsoSDK.Farm:CanLastHit() then
+                                self:AttackMove(_G.gsoSDK.TS:GetLastHitTarget())
+                        elseif _G.gsoSDK.Farm:CanLaneClear() then
+                                self:AttackMove(_G.gsoSDK.TS:GetLaneClearTarget())
+                        end
+                elseif _G.gsoSDK.Cursor:IsCursorReady() and Game.Timer() < gsoLastMouseDown + 1 then
+                        Control.mouse_event(MOUSEEVENTF_RIGHTDOWN)
+                        gsoLastMouseDown = 0
+                end
+        end
+        
+        function __gsoOrbwalker:GetLastMovePos()
+                return gsoLastMovePos
+        end
+        
+        function __gsoOrbwalker:ResetAttack()
+                gsoResetAttack = true
+        end
+        
+        function __gsoOrbwalker:Attack(unit)
+                gsoResetAttack = false
+                _G.gsoSDK.Cursor:SetCursor(cursorPos, unit.pos, 0.05)
+                Control.SetCursorPos(unit.pos)
+                Control.KeyDown(HK_TCO)
+                Control.mouse_event(MOUSEEVENTF_RIGHTDOWN)
+                Control.mouse_event(MOUSEEVENTF_RIGHTUP)
+                Control.KeyUp(HK_TCO)
+                gsoLastMoveLocal = 0
+                gsoLastAttackLocal  = Game.Timer()
+                gsoLastTarget = unit
+        end
+        
+        function __gsoOrbwalker:GetLastTarget()
+                return gsoLastTarget
+        end
+        
+        function __gsoOrbwalker:Move()
+                if Control.IsKeyDown(2) then gsoLastMouseDown = Game.Timer() end
+                gsoLastMovePos = mousePos
+                Control.mouse_event(MOUSEEVENTF_RIGHTDOWN)
+                Control.mouse_event(MOUSEEVENTF_RIGHTUP)
+                gsoLastMoveLocal = Game.Timer() + gsoMenu.delays.humanizer:Value() * 0.001
+        end
+        
+        function __gsoOrbwalker:AttackMove(unit)
+                gsoLastTarget = nil
+                if unit and not gsoIsBlindedByTeemo and gsoResetAttack or (Game.Timer() > gsoLastAttackServer + myHero.attackData.animationTime and Game.Timer() > gsoLastAttackLocal + myHero.attackData.animationTime) then
+                        self:Attack(unit)
+                elseif Game.Timer() > gsoLastAttackServer + myHero.attackData.animationTime and Game.Timer() > gsoLastAttackLocal + myHero.attackData.animationTime and Game.Timer() > gsoLastMoveLocal then
+                        self:Move()
+                end
         end
         
         function __gsoOrbwalker:CreateMenu(menu)
@@ -51,7 +129,7 @@ class "__gsoOrbwalker"
         
         function __gsoOrbwalker:WndMsg(msg, wParam)
                 if wParam == HK_TCO then
-                        gsoLastAttack = Game.Timer()
+                        gsoLastAttackLocal = Game.Timer()
                 end
         end
         
