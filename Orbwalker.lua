@@ -96,9 +96,13 @@ class "__gsoOrbwalker"
         
         function __gsoOrbwalker:AttackMove(unit)
                 gsoLastTarget = nil
-                if unit and not gsoIsBlindedByTeemo and gsoResetAttack or (Game.Timer() > gsoLastAttackServer + myHero.attackData.animationTime and Game.Timer() > gsoLastAttackLocal + myHero.attackData.animationTime) then
+                local animServer = gsoLastAttackServer + myHero.attackData.animationTime + gsoMenu.delays.animserver:Value() * 0.001
+                local animLocal = gsoLastAttackLocal + myHero.attackData.animationTime + gsoMenu.delays.animlocal:Value() * 0.001
+                local windUpServer = gsoLastAttackServer + myHero.attackData.windUpTime + gsoMenu.delays.windupserver:Value() * 0.001
+                local windUpLocal = gsoLastAttackLocal + myHero.attackData.windUpTime + gsoMenu.delays.winduplocal:Value() * 0.001
+                if unit and not gsoIsBlindedByTeemo and gsoResetAttack or (Game.Timer() > animServer and Game.Timer() > animLocal) then
                         self:Attack(unit)
-                elseif Game.Timer() > gsoLastAttackServer + myHero.attackData.animationTime and Game.Timer() > gsoLastAttackLocal + myHero.attackData.animationTime and Game.Timer() > gsoLastMoveLocal then
+                elseif Game.Timer() > windUpServer and Game.Timer() > windUpLocal and Game.Timer() > gsoLastMoveLocal then
                         self:Move()
                 end
         end
@@ -106,7 +110,10 @@ class "__gsoOrbwalker"
         function __gsoOrbwalker:CreateMenu(menu)
                 gsoMenu = menu:MenuElement({name = "Orbwalker", id = "orb", type = MENU, leftIcon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/orb.png" })
                         gsoMenu:MenuElement({name = "Delays", id = "delays", type = MENU})
-                                gsoMenu.delays:MenuElement({name = "Extra Kite Delay", id = "windup", value = 0, min = -50, max = 50, step = 1 })
+                                gsoMenu.delays:MenuElement({name = "Extra WindUp Delay Local", id = "winduplocal", value = 0, min = -100, max = 100, step = 1 })
+                                gsoMenu.delays:MenuElement({name = "Extra WindUp Delay Server", id = "windupserver", value = 0, min = -100, max = 100, step = 1 })
+                                gsoMenu.delays:MenuElement({name = "Extra Anim Delay Local", id = "animlocal", value = 0, min = -200, max = 200, step = 1 })
+                                gsoMenu.delays:MenuElement({name = "Extra Anim Delay Server", id = "animserver", value = 0, min = -200, max = 200, step = 1 })
                                 gsoMenu.delays:MenuElement({name = "Extra LastHit Delay", id = "lhDelay", value = 0, min = -50, max = 50, step = 1 })
                                 gsoMenu.delays:MenuElement({name = "Extra Move Delay", id = "humanizer", value = 200, min = 120, max = 300, step = 10 })
                         gsoMenu:MenuElement({name = "Keys", id = "keys", type = MENU})
