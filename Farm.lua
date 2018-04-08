@@ -32,7 +32,7 @@ local function gsoUpdateActiveAttacks()
                         if not v2.Canceled then
                                 local ranged = v2.Speed > 0
                                 if ranged then
-                                        gsoActiveAttacks[k1][k2].FlyTime = gsoDistance(v2.Ally.pos, gsoPredPos(v2.Speed, v2.Pos, v2.Enemy)) / v2.Speed
+                                        gsoActiveAttacks[k1][k2].FlyTime = v2.Ally.pos:DistanceTo(gsoPredPos(v2.Speed, v2.Pos, v2.Enemy)) / v2.Speed
                                 end
                                 local projectileOnEnemy = 0.025 + _G.gsoSDK.Utilities:GetMaxLatency()
                                 if Game.Timer() > v2.StartTime + gsoActiveAttacks[k1][k2].FlyTime - projectileOnEnemy or not v2.Enemy or v2.Enemy.dead then
@@ -87,11 +87,12 @@ class "__gsoFarm"
                 for i = 1, #allyMinions do
                         local allyMinion = allyMinions[i]
                         if allyMinion.attackData.target == unitHandle then
-                                local flyTime = allyMinion.attackData.projectileSpeed > 0 and gsoDistance(allyMinion.Pos, unitPos) / allyMinion.attackData.projectileSpeed or 0
+                                local minionDmg = (allyMinion.totalDamage*(1+allyMinion.bonusDamagePercent))-unit.flatDamageReduction
+                                local flyTime = allyMinion.attackData.projectileSpeed > 0 and allyMinion.pos:DistanceTo(unitPos) / allyMinion.attackData.projectileSpeed or 0
                                 local endTime = (allyMinion.attackData.endTime - allyMinion.attackData.animationTime) + flyTime + allyMinion.attackData.windUpTime
                                 endTime = endTime > Game.Timer() and endTime or endTime + allyMinion.attackData.animationTime + flyTime
                                 while endTime - Game.Timer() < time do
-                                        unitHealth = unitHealth - allyMinion.Dmg
+                                        unitHealth = unitHealth - minionDmg
                                         endTime = endTime + allyMinion.attackData.animationTime + flyTime
                                 end
                                 return unitHealth
@@ -102,8 +103,8 @@ class "__gsoFarm"
         
         function __gsoFarm:MinionHpPredAccuracy(unit, time)
                 local unitHealth, unitHandle = unit.health, unit.handle
-                for allyID, allyActiveAttacks in pairs(gsoFarm.allyActiveAttacks) do
-                        for activeAttackID, activeAttack in pairs(gsoFarm.allyActiveAttacks[allyID]) do
+                for allyID, allyActiveAttacks in pairs(gsoActiveAttacks) do
+                        for activeAttackID, activeAttack in pairs(gsoActiveAttacks[allyID]) do
                                 if not activeAttack.Canceled and unitHandle == activeAttack.Enemy.handle then
                                         local endTime = activeAttack.StartTime + activeAttack.FlyTime
                                         if endTime > Game.Timer() and endTime - Game.Timer() < time then
@@ -142,7 +143,7 @@ class "__gsoFarm"
                                                                                 }
                                                                         end
                                                                 elseif allyMinion.pathing.hasMovePath then
-                                                                        gsoFarm.allyActiveAttacks[allyMinion.Handle][allyMinion.attackData.endTime] = {
+                                                                        gsoActiveAttacks[allyMinion.handle][allyMinion.attackData.endTime] = {
                                                                                 Canceled = true,
                                                                                 Ally = allyMinion
                                                                         }

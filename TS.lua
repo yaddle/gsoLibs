@@ -1,4 +1,7 @@
 local gsoMenu = nil
+local gsoDrawSelMenu = nil
+local gsoDrawLHMenu = nil
+local gsoDrawALHMenu = nil
 local gsoSelectedTarget = nil
 local gsoLastSelTick = 0
 local gsoLastHeroTarget = nil
@@ -51,6 +54,24 @@ class "__gsoTS"
                         gsoMenu.laneset:MenuElement({ id = "enabledhar", name = "Harass enabled", value = true })
         end
         
+        function __gsoTS:CreateDrawMenu(menu)
+                gsoDrawSelMenu = menu:MenuElement({name = "Selected Target",  id = "selected", type = MENU})
+                        gsoDrawSelMenu:MenuElement({name = "Enabled",  id = "enabled", value = true})
+                        gsoDrawSelMenu:MenuElement({name = "Color",  id = "color", color = Draw.Color(255, 204, 0, 0)})
+                        gsoDrawSelMenu:MenuElement({name = "Width",  id = "width", value = 3, min = 1, max = 10})
+                        gsoDrawSelMenu:MenuElement({name = "Radius",  id = "radius", value = 150, min = 1, max = 300})
+                gsoDrawLHMenu = menu:MenuElement({name = "LastHitable Minion",  id = "lasthit", type = MENU})
+                        gsoDrawLHMenu:MenuElement({name = "Enabled",  id = "enabled", value = true})
+                        gsoDrawLHMenu:MenuElement({name = "Color",  id = "color", color = Draw.Color(150, 255, 255, 255)})
+                        gsoDrawLHMenu:MenuElement({name = "Width",  id = "width", value = 3, min = 1, max = 10})
+                        gsoDrawLHMenu:MenuElement({name = "Radius",  id = "radius", value = 50, min = 1, max = 100})
+                gsoDrawALHMenu = menu:MenuElement({name = "Almost LastHitable Minion",  id = "almostlasthit", type = MENU})
+                        gsoDrawALHMenu:MenuElement({name = "Enabled",  id = "enabled", value = true})
+                        gsoDrawALHMenu:MenuElement({name = "Color",  id = "color", color = Draw.Color(150, 239, 159, 55)})
+                        gsoDrawALHMenu:MenuElement({name = "Width",  id = "width", value = 3, min = 1, max = 10})
+                        gsoDrawALHMenu:MenuElement({name = "Radius",  id = "radius", value = 50, min = 1, max = 100})
+        end
+        
         function __gsoTS:GetTarget(enemyHeroes, dmgAP)
                 local selectedID
                 if gsoMenu.selected.enable:Value() and gsoSelectedTarget then
@@ -101,7 +122,7 @@ class "__gsoTS"
         end
         
         function __gsoTS:GetComboTarget()
-                local comboT = self:GetTarget(_G.gsoSDK.ObjectManager:GetEnemyHeroes(myHero.attackRange+myHero.boundingRadius, true, "attack"), false)
+                local comboT = self:GetTarget(_G.gsoSDK.ObjectManager:GetEnemyHeroes(myHero.range+myHero.boundingRadius, true, "attack"), false)
                 if comboT ~= nil then
                         gsoLastHeroTarget = comboT
                 end
@@ -125,7 +146,7 @@ class "__gsoTS"
         end
         
         function __gsoTS:GetLaneClearTarget()
-                local enemyTurrets = _G.gsoSDK.ObjectManager:GetEnemyTurrets(myHero.attackRange+myHero.boundingRadius, true)
+                local enemyTurrets = _G.gsoSDK.ObjectManager:GetEnemyTurrets(myHero.range+myHero.boundingRadius, true)
                 for i = 1, #enemyTurrets do
                         return enemyTurrets[i]
                 end
@@ -146,7 +167,7 @@ class "__gsoTS"
         end
         
         function __gsoTS:Tick()
-                local enemyMinions = _G.gsoSDK.ObjectManager:GetEnemyMinions(myHero.attackRange + myHero.boundingRadius, true)
+                local enemyMinions = _G.gsoSDK.ObjectManager:GetEnemyMinions(myHero.range + myHero.boundingRadius, true)
                 local allyMinions = _G.gsoSDK.ObjectManager:GetAllyMinions(1500, false)
                 local lastHitMode = "accuracy"
                 local cacheFarmMinions = {}
@@ -172,5 +193,23 @@ class "__gsoTS"
                                 end
                         end
                         gsoLastSelTick = GetTickCount()
+                end
+        end
+        
+        function __gsoTS:Draw()
+                if gsoDrawSelMenu.enabled:Value() then
+                        if gsoSelectedTarget and not gsoSelectedTarget.dead and gsoSelectedTarget.isTargetable and gsoSelectedTarget.visible and gsoSelectedTarget.valid then
+                                Draw.Circle(gsoSelectedTarget.pos, gsoDrawSelMenu.radius:Value(), gsoDrawSelMenu.width:Value(), gsoDrawSelMenu.color:Value())
+                        end
+                end
+                if gsoDrawLHMenu.enabled:Value() or gsoDrawALHMenu.enabled:Value() then
+                        for i = 1, #gsoFarmMinions do
+                                local minion = gsoFarmMinions[i]
+                                if minion.LastHitable and gsoDrawLHMenu.enabled:Value() then
+                                        Draw.Circle(minion.Minion.pos, gsoDrawLHMenu.radius:Value(), gsoDrawLHMenu.width:Value(), gsoDrawLHMenu.color:Value())
+                                elseif minion.AlmostLastHitable and gsoDrawALHMenu.enabled:Value() then
+                                        Draw.Circle(minion.Minion.pos, gsoDrawALHMenu.radius:Value(), gsoDrawALHMenu.width:Value(), gsoDrawALHMenu.color:Value())
+                                end
+                        end
                 end
         end

@@ -22,6 +22,9 @@ class "__gsoLibLoader"
                 _G.gsoSDK.TS = __gsoTS()
                 -----------------------------------------------------------
                 _G.gsoSDK.TS:CreateMenu(menu)
+                menu:MenuElement({name = "Drawings", id = "gsodraw", leftIcon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/circles.png", type = MENU })
+                menu.gsodraw:MenuElement({name = "Enabled",  id = "enabled", value = true})
+                _G.gsoSDK.TS:CreateDrawMenu(menu.gsodraw)
         end
         
         function __gsoLibLoader:Tick()
@@ -38,4 +41,5 @@ class "__gsoLibLoader"
         end
         
         function __gsoLibLoader:Draw()
+                 _G.gsoSDK.TS:Draw()
         end
