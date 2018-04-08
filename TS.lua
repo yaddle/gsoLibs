@@ -3,7 +3,7 @@ local gsoSelectedTarget = nil
 local gsoLastSelTick = 0
 local gsoLastHeroTarget = nil
 local gsoLastMinionLastHit = nil
-local gsoLastHitableMinions = {}
+local gsoFarmMinions = {}
 local gsoPriorities = {
         ["Aatrox"] = 3, ["Ahri"] = 2, ["Akali"] = 2, ["Alistar"] = 5, ["Amumu"] = 5, ["Anivia"] = 2, ["Annie"] = 2, ["Ashe"] = 1, ["AurelionSol"] = 2, ["Azir"] = 2,
         ["Bard"] = 3, ["Blitzcrank"] = 5, ["Brand"] = 2, ["Braum"] = 5, ["Caitlyn"] = 1, ["Camille"] = 3, ["Cassiopeia"] = 2, ["Chogath"] = 5, ["Corki"] = 1,
@@ -47,6 +47,8 @@ class "__gsoTS"
                         _G.gsoSDK.ObjectManager:OnEnemyHeroLoad(function(hero) gsoCreatePriorityMenu(hero.charName) end)
                 gsoMenu:MenuElement({ id = "selected", name = "Selected Target", type = MENU })
                         gsoMenu.selected:MenuElement({ id = "enable", name = "Enable", value = true })
+                gsoMenu:MenuElement({name = "LaneClear", id = "laneset", type = MENU})
+                        gsoMenu.laneset:MenuElement({ id = "enabledhar", name = "Harass enabled", value = true })
         end
         
         function __gsoTS:GetTarget(enemyHeroes, dmgAP)
@@ -94,6 +96,10 @@ class "__gsoTS"
                 return gsoLastMinionLastHit
         end
         
+        function __gsoTS:GetFarmMinions()
+                return gsoFarmMinions
+        end
+        
         function __gsoTS:GetComboTarget()
                 local comboT = self:GetTarget(_G.gsoSDK.ObjectManager:GetEnemyHeroes(myHero.attackRange+myHero.boundingRadius, true, "attack"), false)
                 if comboT ~= nil then
@@ -102,84 +108,38 @@ class "__gsoTS"
                 return comboT
         end
         
-        --enemyMinions = _G.gsoSDK.ObjectManager:GetEnemyMinions(myHero.attackRange+myHero.boundingRadius, true)
-        
-        function __gsoTS:GetLastHitTarget(enemyMinions, mode, allyMinions)
+        function __gsoTS:GetLastHitTarget()
                 local min = 10000000
                 local result = nil
-                for i = 1, #enemyMinions do
-                        local enemyMinion = enemyMinions[i]
-                        local FlyTime = myHero.attackData.windUpTime + ( myHero.pos:DistanceTo(enemyMinion.pos) / myHero.attackData.projectileSpeed )
-                        if _G.gsoSDK.Farm:IsLastHitable(enemyMinion, FlyTime, myHero.totalDamage, mode, allyMinions) then
-                                lastHitable[#lastHitable+1] = enemyMinion
+                for i = 1, #gsoFarmMinions do
+                        local enemyMinion = gsoFarmMinions[i]
+                        if enemyMinion.LastHitable and enemyMinion.PredictedHP < min then
+                                min = enemyMinion.PredictedHP
+                                result = enemyMinion.Minion
                         end
                 end
-                local lastHitable = _G.gsoSDK.ObjectManager:GetEnemyMinions(myHero.attackRange+myHero.boundingRadius, true)
-                gsoFarm.lastHitable
-                local meRange = myHero.range + myHero.boundingRadius
-                local lastHitTarget = nil
-                local mePos = myHero.pos
-                for i = 1, #lastHitable do
-                        local minion = lastHitable[i]
-                        if gsoDistance(mePos, minion.pos) < meRange + 25 and minion.health < min and minion.handle ~= gsoFarm.lastHitQID then
-                                min = minion.health
-                                lastHitTarget = minion.Minion
-                        end
+                if result ~= nil then
+                        gsoLastMinionLastHit = result
                 end
-                if lastHitTarget ~= nil then
-                        gsoLastMinionLastHit = lastHitTarget
-                end
-                return lastHitTarget
+                return result
         end
-
-        function __gsoTS:GetHarassTarget()
-                local lastHitTarget = gsoGetLastHitTarget()
-                return lastHitTarget == nil and gsoGetComboTarget() or lastHitTarget
-        end
-
+        
         function __gsoTS:GetLaneClearTarget()
-                local result
-                local harassEnabled = gsoMenu.orb.laneset.enabledhar:Value()
-                local prioHarass = gsoMenu.orb.laneset.priohar:Value()
-                if not harassEnabled or not prioHarass then
-                        result = gsoGetLastHitTarget()
-                else
-                        result = gsoGetHarassTarget()
+                local enemyTurrets = _G.gsoSDK.ObjectManager:GetEnemyTurrets(myHero.attackRange+myHero.boundingRadius, true)
+                for i = 1, #enemyTurrets do
+                        return enemyTurrets[i]
                 end
-                local mePos = myHero.pos
-                if result ~= nil then return result end
-                local meRange = myHero.range + myHero.boundingRadius
-                local almostLastHitable = gsoFarm.almostLastHitable
-                local canLaneClear = true
-                for i = 1, #almostLastHitable do
-                        local minion = almostLastHitable[i]
-                        if gsoDistance(mePos, minion.pos) < meRange + 50 then
-                                gsoShouldWait = true
-                                gsoShouldWaitT = gsoGameTimer()
-                                canLaneClear = false
-                                break
-                        end
+                if gsoMenu.laneset.enabledhar:Value() then
+                        local result = self:GetComboTarget()
+                        if result then return result end
                 end
-                if canLaneClear and not gsoShouldWait then
-                        if harassEnabled then
-                                result = gsoGetComboTarget()
-                                if result ~= nil then return result end
-                        end
-                        local enemyTurrets = gsoObjects.enemyTurrets
-                        for i = 1, #enemyTurrets do
-                                local turret = enemyTurrets[i]
-                                if gsoDistance(turret.pos, mePos) < meRange + turret.boundingRadius then
-                                        return turret
-                                end
-                        end
-                        local min = 10000000
-                        local laneClearable = gsoFarm.laneClearable
-                        for i = 1, #laneClearable do
-                                local minion = laneClearable[i]
-                                if gsoDistance(mePos, minion.pos) < meRange + 25 and minion.health < min then
-                                        min = minion.health
-                                        result = minion.Minion
-                                end
+                local result = nil
+                local min = 10000000
+                for i = 1, #gsoFarmMinions do
+                        local enemyMinion = gsoFarmMinions[i]
+                        if enemyMinion.PredictedHP < min then
+                                min = enemyMinion.PredictedHP
+                                result = enemyMinion.Minion
                         end
                 end
                 return result
@@ -189,11 +149,13 @@ class "__gsoTS"
                 local enemyMinions = _G.gsoSDK.ObjectManager:GetEnemyMinions(myHero.attackRange + myHero.boundingRadius, true)
                 local allyMinions = _G.gsoSDK.ObjectManager:GetAllyMinions(1500, false)
                 local lastHitMode = "accuracy"
+                local cacheFarmMinions = {}
                 for i = 1, #enemyMinions do
                         local enemyMinion = enemyMinions[i]
                         local FlyTime = myHero.attackData.windUpTime + ( myHero.pos:DistanceTo(enemyMinion.pos) / myHero.attackData.projectileSpeed )
-                        gsoLastHitableMinions[#gsoLastHitableMinions+1] = _G.gsoSDK.Farm:SetLastHitable(enemyMinion, FlyTime, myHero.totalDamage, lastHitMode, allyMinions)
+                        cacheFarmMinions[#cacheFarmMinions+1] = _G.gsoSDK.Farm:SetLastHitable(enemyMinion, FlyTime, myHero.totalDamage, lastHitMode, allyMinions)
                 end
+                gsoFarmMinions = cacheFarmMinions
         end
         
         function __gsoTS:WndMsg(msg, wParam)

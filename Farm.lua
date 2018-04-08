@@ -2,6 +2,7 @@
 local gsoActiveAttacks = {}
 local gsoShouldWait = false
 local gsoShouldWaitTime = 0
+local gsoIsLastHitable = false
 
 local function gsoPredPos(speed, pPos, unit)
         if unit.pathing.hasMovePath then
@@ -53,6 +54,7 @@ class "__gsoFarm"
                 if mode == "fast" then
                         local hpPred = self:MinionHpPredFast(enemyMinion, allyMinions, time)
                         local lastHitable = hpPred - damage < 0
+                        if lastHitable then gsoIsLastHitable = true end
                         local almostLastHitable = lastHitable and false or self:MinionHpPredFast(enemyMinion, allyMinions, myHero.attackData.animationTime * 3) - damage < 0
                         if almostLastHitable then
                                 gsoShouldWait = true
@@ -62,6 +64,7 @@ class "__gsoFarm"
                 elseif mode == "accuracy" then
                         local hpPred = self:MinionHpPredAccuracy(enemyMinion, time)
                         local lastHitable = hpPred - damage < 0
+                        if lastHitable then gsoIsLastHitable = true end
                         local almostLastHitable = lastHitable and false or self:MinionHpPredFast(enemyMinion, allyMinions, myHero.attackData.animationTime * 3) - damage < 0
                         if almostLastHitable then
                                 gsoShouldWait = true
@@ -69,6 +72,10 @@ class "__gsoFarm"
                         end
                         return { LastHitable =  lastHitable, Unkillable = hpPred < 0, AlmostLastHitable = almostLastHitable, PredictedHP = hpPred, Minion = enemyMinion }
                 end
+        end
+        
+        function __gsoFarm:CanLastHit()
+                return gsoIsLastHitable
         end
         
         function __gsoFarm:CanLaneClear()
@@ -162,108 +169,5 @@ class "__gsoFarm"
                 if gsoShouldWait and Game.Timer() > gsoShouldWaitTime + 0.5 then
                         gsoShouldWait = false
                 end
+                gsoIsLastHitable = false
         end
-
-
-
-
-
-
-
-
-
-
-
---[[
-        function __gsoFarm:UpdateMinions(enemyMinions)
-                if gsoShouldWait and gsoGameTimer() > gsoShouldWaitT + 0.5 then
-                  gsoShouldWait = false
-                end
-                local mLH, aaData, projSpeed, windUp, anim, meDmg
-                if #enemyMinionsCache > 0 then
-                  mLH = gsoMenu.orb.delays.lhDelay:Value() * 0.001
-                  aaData = gsoMyHero.attackData
-                  projSpeed = aaData.projectileSpeed
-                  windUp = aaData.windUpTime - mLH
-                  windUp = windUp + (gsoExtra.minLatency*0.5)
-                  anim = aaData.animationTime
-                  meDmg = myHero.totalDamage
-                end
-                local lastHitable = {}
-                local almostLastHitable = {}
-                local laneClearable = {}
-                for i = 1, #enemyMinionsCache do
-                  local enemy = enemyMinionsCache[i]
-                  local minionHandle = enemy.Handle
-                  local minionPos = enemy.Pos
-                  local minionHealth = enemy.Health
-                  local flyTime = windUp + ( gsoDistance(mePos, minionPos) / projSpeed )
-                  local accuracyHpPred = gsoMinionHpPredAccuracy(minionHealth, minionHandle, flyTime)
-                  if accuracyHpPred - meDmg <= 0 then
-                    lastHitable[#lastHitable+1] = { Minion = enemy.Minion, pos = minionPos, health = accuracyHpPred }
-                  else
-                    if gsoMinionHpPredFast(minionHandle, minionPos, minionHealth, anim*3, allyMinionsCache, enemyHandles) - meDmg < 0 then
-                      almostLastHitable[#almostLastHitable+1] = enemy.Minion
-                    else
-                      laneClearable[#laneClearable+1] = { Minion = enemy.Minion, pos = minionPos, health = accuracyHpPred }
-                    end
-                  end
-                end
-                gsoFarm.lastHitable = lastHitable
-                gsoFarm.laneClearable = laneClearable
-                gsoFarm.almostLastHitable = almostLastHitable
-        end
-        
-local function minionsLogic()
-    
-    if gsoShouldWait and gsoGameTimer() > gsoShouldWaitT + 0.5 then
-        gsoShouldWait = false
-    end
-    
-    local sourcePos, sourceRange, mLH, aaData, windUp, meDmg
-    local enemyMinions = gsoGetEnemyMinions(2000, gsoMyHero.pos, false)
-    if #enemyMinions > 0 then
-        sourcePos = gsoMyHero.pos
-        sourceRange = gsoMyHero.range + gsoMyHero.boundingRadius
-        mLH = gsoMenu.orb.delays.lhDelay:Value() * 0.001
-        aaData = gsoMyHero.attackData
-        windUp = aaData.windUpTime + gsoExtra.minLatency - mLH
-        meDmg = myHero.totalDamage + gsoBonusDmg()
-    end
-    
-    local lastHitable = {}
-    local almostLastHitable = {}
-    local laneClearable = {}
-    for i = 1, #enemyMinions do
-        local minion = enemyMinions[i]
-        local flyTime = windUp + ( gsoDistance(sourcePos, minion.pos) / aaData.projectileSpeed )
-        local accuracyHpPred = gsoMinionHpPredAccuracy(minion, flyTime)
-        local hpPred = gsoMenu.orb.farmmode:Value() == 1 and accuracyHpPred or gsoMinionHpPredFast(minion, flyTime)
-        local dmgOnMinion = meDmg + gsoBonusDmgUnit(minion)
-        if accuracyHpPred < 0 then
-            local args = { Minion = minion }
-            for i = 1, #gsoUnkillableMinion do
-                local action = gsoUnkillableMinion[i](args)
-            end
-            --print("unkillable")
-        end
-        if hpPred - dmgOnMinion <= 0 then
-            lastHitable[#lastHitable+1] = { Minion = minion, Health = hpPred }
-        else
-            local fastHpPred = gsoMinionHpPredFast(minion, aaData.animationTime * 3)
-            if fastHpPred - dmgOnMinion < 0 then
-                gsoShouldWait = true
-                gsoShouldWaitT = gsoGameTimer()
-                almostLastHitable[#almostLastHitable+1] = { Minion = minion, Health = hpPred }
-            else
-                laneClearable[#laneClearable+1] = { Minion = minion, Health = hpPred }
-            end
-        end
-    end
-    
-    gsoFarm.lastHitable = lastHitable
-    gsoFarm.laneClearable = laneClearable
-    gsoFarm.almostLastHitable = almostLastHitable
-    
-end
---]]

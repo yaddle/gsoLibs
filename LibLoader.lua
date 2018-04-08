@@ -30,6 +30,7 @@ class "__gsoLibLoader"
                 local enemyMinions = _G.gsoSDK.ObjectManager:GetEnemyMinions(1500, false)
                 local allyMinions = _G.gsoSDK.ObjectManager:GetAllyMinions(1500, false)
                 _G.gsoSDK.Farm:Tick(allyMinions, enemyMinions)
+                _G.gsoSDK.TS:Tick()
         end
         
         function __gsoLibLoader:WndMsg(msg, wParam)
