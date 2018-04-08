@@ -14,6 +14,8 @@ class "__gsoLibLoader"
         function __gsoLibLoader:__init(menu)
                 require "gsoLibs\\Utilities"
                 _G.gsoSDK.Utilities = __gsoUtilities()
+                require "gsoLibs\\Cursor"
+                _G.gsoSDK.Cursor = __gsoCursor()
                 require "gsoLibs\\ObjectManager"
                 _G.gsoSDK.ObjectManager = __gsoOB()
                 require "gsoLibs\\Farm"
