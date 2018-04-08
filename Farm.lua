@@ -95,7 +95,6 @@ class "__gsoFarm"
                                         unitHealth = unitHealth - minionDmg
                                         endTime = endTime + allyMinion.attackData.animationTime + flyTime
                                 end
-                                return unitHealth
                         end
                 end
                 return unitHealth
