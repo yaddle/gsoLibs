@@ -23,10 +23,12 @@ class "__gsoLibLoader"
                 _G.gsoSDK.Farm = __gsoFarm()
                 require "gsoLibs\\TS"
                 _G.gsoSDK.TS = __gsoTS()
+                require "gsoLibs\\Orbwalker"
+                _G.gsoSDK.Orbwalker = __gsoOrbwalker()
                 -----------------------------------------------------------
                 -- MENU
                 _G.gsoSDK.TS:CreateMenu(menu)
-                 _G.gsoSDK.Orbwalker:CreateMenu(menu)
+                _G.gsoSDK.Orbwalker:CreateMenu(menu)
                 menu:MenuElement({name = "Drawings", id = "gsodraw", leftIcon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/circles.png", type = MENU })
                 menu.gsodraw:MenuElement({name = "Enabled",  id = "enabled", value = true})
                 _G.gsoSDK.TS:CreateDrawMenu(menu.gsodraw)
@@ -54,10 +56,12 @@ class "__gsoLibLoader"
         function __gsoLibLoader:Tick()
                 _G.gsoSDK.ObjectManager:Tick()
                 _G.gsoSDK.Utilities:Tick()
+                _G.gsoSDK.Cursor:Tick()
                 local enemyMinions = _G.gsoSDK.ObjectManager:GetEnemyMinions(1500, false)
                 local allyMinions = _G.gsoSDK.ObjectManager:GetAllyMinions(1500, false)
                 _G.gsoSDK.Farm:Tick(allyMinions, enemyMinions)
                 _G.gsoSDK.TS:Tick()
+                _G.gsoSDK.Orbwalker:Tick()
         end
         
         function __gsoLibLoader:WndMsg(msg, wParam)

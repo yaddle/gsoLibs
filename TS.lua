@@ -88,9 +88,9 @@ class "__gsoTS"
                         elseif mode == 1 then
                                 local unitName = unit.charName
                                 local multiplier = gsoPriorityMultiplier[gsoMenu.priority[unitName] and gsoMenu.priority[unitName]:Value() or 6]
-                                local def = dmgAP and multiplier * (unit.magicResist - gsoMyHero.magicPen) or multiplier * (unit.armor - gsoMyHero.armorPen)
+                                local def = dmgAP and multiplier * (unit.magicResist - myHero.magicPen) or multiplier * (unit.armor - myHero.armorPen)
                                 if def > 0 then
-                                        def = dmgAP and gsoMyHero.magicPenPercent * def or gsoMyHero.bonusArmorPenPercent * def
+                                        def = dmgAP and myHero.magicPenPercent * def or myHero.bonusArmorPenPercent * def
                                 end
                                 x = ( ( unit.health * multiplier * ( ( 100 + def ) / 100 ) ) - ( unit.totalDamage * unit.attackSpeed * 2 ) ) - unit.ap
                         elseif mode == 2 then
@@ -122,7 +122,7 @@ class "__gsoTS"
         end
         
         function __gsoTS:GetComboTarget()
-                local comboT = self:GetTarget(_G.gsoSDK.ObjectManager:GetEnemyHeroes(myHero.range+myHero.boundingRadius, true, "attack"), false)
+                local comboT = self:GetTarget(_G.gsoSDK.ObjectManager:GetEnemyHeroes(myHero.range+myHero.boundingRadius - 35, true, "attack"), false)
                 if comboT ~= nil then
                         gsoLastHeroTarget = comboT
                 end
@@ -146,7 +146,7 @@ class "__gsoTS"
         end
         
         function __gsoTS:GetLaneClearTarget()
-                local enemyTurrets = _G.gsoSDK.ObjectManager:GetEnemyTurrets(myHero.range+myHero.boundingRadius, true)
+                local enemyTurrets = _G.gsoSDK.ObjectManager:GetEnemyTurrets(myHero.range+myHero.boundingRadius - 35, true)
                 for i = 1, #enemyTurrets do
                         return enemyTurrets[i]
                 end
@@ -167,7 +167,7 @@ class "__gsoTS"
         end
         
         function __gsoTS:Tick()
-                local enemyMinions = _G.gsoSDK.ObjectManager:GetEnemyMinions(myHero.range + myHero.boundingRadius, true)
+                local enemyMinions = _G.gsoSDK.ObjectManager:GetEnemyMinions(myHero.range + myHero.boundingRadius - 35, true)
                 local allyMinions = _G.gsoSDK.ObjectManager:GetAllyMinions(1500, false)
                 local lastHitMode = "accuracy"
                 local cacheFarmMinions = {}

@@ -6,11 +6,13 @@ local gsoLastMoveLocal = 0
 local gsoMenu = nil
 local gsoDrawMenuMe = nil
 local gsoDrawMenuHe = nil
-local gsoAttackEndTime = 0
 local gsoLastMouseDown = 0
 local gsoLastMovePos = myHero.pos
 local gsoResetAttack = false
 local gsoLastTarget = nil
+local gsoTestCount = 0
+local gsoTestStartTime = 0
+local gsoAttackEndTime = myHero.attackData.endTime + 0.1
 
 local function gsoCheckTeemoBlind()
         for i = 0, gsoMyHero.buffCount do
@@ -33,6 +35,29 @@ class "__gsoOrbwalker"
                 -- SERVER ATTACK START TIME
                 if myHero.attackData.endTime > gsoAttackEndTime then
                         gsoLastAttackServer = Game.Timer()
+                        gsoAttackEndTime = myHero.attackData.endTime
+                        if gsoMenu.delays.enabled:Value() then
+                                if gsoTestCount == 0 then
+                                        gsoTestStartTime = Game.Timer()
+                                end
+                                gsoTestCount = gsoTestCount + 1
+                                if gsoTestCount == 5 then
+                                        print("5 attacks in time: " .. tostring(Game.Timer() - gsoTestStartTime) .. "[sec]")
+                                        gsoTestCount = 0
+                                        gsoTestStartTime = 0
+                                end
+                        end
+                end
+                if gsoLastAttackLocal > gsoLastAttackServer and Game.Timer() > gsoLastAttackLocal + 0.11 + _G.gsoSDK.Utilities:GetMaxLatency() then
+                        if gsoMenu.delays.enabled:Value() then
+                                print("reset attack1")
+                        end
+                        gsoLastAttackLocal = 0
+                elseif gsoLastAttackLocal < gsoLastAttackServer and Game.Timer() < gsoLastAttackLocal + myHero.attackData.windUpTime and myHero.pathing.hasMovePath then
+                        if gsoMenu.delays.enabled:Value() then
+                                print("reset attack2")
+                        end
+                        gsoLastAttackLocal = 0
                 end
                 -- CHECK IF CAN ORBWALK
                 if not _G.gsoSDK.Cursor:IsCursorReady() or Game.IsChatOpen() or (ExtLibEvade and ExtLibEvade.Evading) then
@@ -96,13 +121,12 @@ class "__gsoOrbwalker"
         
         function __gsoOrbwalker:AttackMove(unit)
                 gsoLastTarget = nil
-                local animServer = gsoLastAttackServer + myHero.attackData.animationTime + gsoMenu.delays.animserver:Value() * 0.001
-                local animLocal = gsoLastAttackLocal + myHero.attackData.animationTime + gsoMenu.delays.animlocal:Value() * 0.001
-                local windUpServer = gsoLastAttackServer + myHero.attackData.windUpTime + gsoMenu.delays.windupserver:Value() * 0.001
-                local windUpLocal = gsoLastAttackLocal + myHero.attackData.windUpTime + gsoMenu.delays.winduplocal:Value() * 0.001
-                if unit and not gsoIsBlindedByTeemo and gsoResetAttack or (Game.Timer() > animServer and Game.Timer() > animLocal) then
+                local latency = _G.gsoSDK.Utilities.GetMinLatency() + _G.gsoSDK.Utilities.GetMaxLatency()
+                latency = latency * 0.5
+                local canAttack = gsoResetAttack or Game.Timer() > gsoLastAttackLocal + myHero.attackData.animationTime + latency + (gsoMenu.delays.animdelay:Value() * 0.001)
+                if unit and unit.pos and unit.pos:ToScreen().onScreen and not gsoIsBlindedByTeemo and canAttack then
                         self:Attack(unit)
-                elseif Game.Timer() > windUpServer and Game.Timer() > windUpLocal and Game.Timer() > gsoLastMoveLocal then
+                elseif Game.Timer() > gsoLastAttackLocal + myHero.attackData.windUpTime+ latency + (gsoMenu.delays.windupdelay:Value() * 0.001) and Game.Timer() > gsoLastMoveLocal then
                         self:Move()
                 end
         end
@@ -110,10 +134,9 @@ class "__gsoOrbwalker"
         function __gsoOrbwalker:CreateMenu(menu)
                 gsoMenu = menu:MenuElement({name = "Orbwalker", id = "orb", type = MENU, leftIcon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/orb.png" })
                         gsoMenu:MenuElement({name = "Delays", id = "delays", type = MENU})
-                                gsoMenu.delays:MenuElement({name = "Extra WindUp Delay Local", id = "winduplocal", value = 0, min = -100, max = 100, step = 1 })
-                                gsoMenu.delays:MenuElement({name = "Extra WindUp Delay Server", id = "windupserver", value = 0, min = -100, max = 100, step = 1 })
-                                gsoMenu.delays:MenuElement({name = "Extra Anim Delay Local", id = "animlocal", value = 0, min = -200, max = 200, step = 1 })
-                                gsoMenu.delays:MenuElement({name = "Extra Anim Delay Server", id = "animserver", value = 0, min = -200, max = 200, step = 1 })
+                                gsoMenu.delays:MenuElement({name = "Enable DPS Test [ for Extra Anim Delay ]",  id = "enabled", value = false})
+                                gsoMenu.delays:MenuElement({name = "Extra WindUp Delay", id = "windupdelay", value = 100, min = 0, max = 300, step = 10 })
+                                gsoMenu.delays:MenuElement({name = "Extra Anim Delay", id = "animdelay", value = 100, min = 0, max = 300, step = 10 })
                                 gsoMenu.delays:MenuElement({name = "Extra LastHit Delay", id = "lhDelay", value = 0, min = -50, max = 50, step = 1 })
                                 gsoMenu.delays:MenuElement({name = "Extra Move Delay", id = "humanizer", value = 200, min = 120, max = 300, step = 10 })
                         gsoMenu:MenuElement({name = "Keys", id = "keys", type = MENU})
@@ -126,11 +149,11 @@ class "__gsoOrbwalker"
         function __gsoOrbwalker:CreateDrawMenu(menu)
                 gsoDrawMenuMe = menu:MenuElement({name = "MyHero Attack Range", id = "me", type = MENU})
                         gsoDrawMenuMe:MenuElement({name = "Enabled",  id = "enabled", value = true})
-                        gsoDrawMenuMe:MenuElement({name = "Color",  id = "color", color = gsoDrawColor(150, 49, 210, 0)})
+                        gsoDrawMenuMe:MenuElement({name = "Color",  id = "color", color = Draw.Color(150, 49, 210, 0)})
                         gsoDrawMenuMe:MenuElement({name = "Width",  id = "width", value = 1, min = 1, max = 10})
                 gsoDrawMenuHe = menu:MenuElement({name = "Enemy Attack Range", id = "he", type = MENU})
                         gsoDrawMenuHe:MenuElement({name = "Enabled",  id = "enabled", value = true})
-                        gsoDrawMenuHe:MenuElement({name = "Color",  id = "color", color = gsoDrawColor(150, 255, 0, 0)})
+                        gsoDrawMenuHe:MenuElement({name = "Color",  id = "color", color = Draw.Color(150, 255, 0, 0)})
                         gsoDrawMenuHe:MenuElement({name = "Width",  id = "width", value = 1, min = 1, max = 10})
         end
         
