@@ -7,7 +7,7 @@ local function gsoDelayedActions()
         local cacheDA = {}
         for i = 1, #gsoDA do
                 local t = gsoDA[i]
-                if Game.Timer() > t.StartTime then
+                if Game.Timer() > t.StartTime + t.Delay then
                         t.Func()
                 else
                         cacheDA[#cacheDA+1] = t

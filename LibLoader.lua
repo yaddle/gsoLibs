@@ -25,6 +25,21 @@ class "__gsoLibLoader"
                 menu:MenuElement({name = "Drawings", id = "gsodraw", leftIcon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/circles.png", type = MENU })
                 menu.gsodraw:MenuElement({name = "Enabled",  id = "enabled", value = true})
                 _G.gsoSDK.TS:CreateDrawMenu(menu.gsodraw)
+                _G.gsoSDK.Utilities:AddAction(function()
+                        if _G.Orbwalker then
+                                GOS.BlockMovement = true
+                                GOS.BlockAttack = true
+                                _G.Orbwalker.Enabled:Value(false)
+                        end
+                        if _G.SDK and _G.SDK.Orbwalker then
+                                _G.SDK.Orbwalker:SetMovement(false)
+                                _G.SDK.Orbwalker:SetAttack(false)
+                        end
+                        if _G.EOW then
+                                _G.EOW:SetMovements(false)
+                                _G.EOW:SetAttacks(false)
+                        end
+                end, 5)
         end
         
         function __gsoLibLoader:Tick()
