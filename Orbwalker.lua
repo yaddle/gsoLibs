@@ -1,5 +1,6 @@
 local gsoIsTeemo = false
 local gsoIsBlindedByTeemo = false
+local gsoLastAttack = 0
 
 local function gsoCheckTeemoBlind()
         for i = 0, gsoMyHero.buffCount do
@@ -19,6 +20,12 @@ class "__gsoOrbwalker"
         
         function __gsoOrbwalker:Tick()
                 if gsoIsTeemo then gsoIsBlindedByTeemo = gsoCheckTeemoBlind() end
+        end
+        
+        function __gsoOrbwalker:WndMsg(msg, wParam)
+                if wParam == HK_TCO then
+                        gsoLastAttack = Game.Timer()
+                end
         end
 
 
