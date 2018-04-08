@@ -4,10 +4,6 @@ local gsoSetCursorPos = nil
 
 class "__gsoCursor"
         
-        function __gsoCursor:__init()
-                _G.gsoSDK.ObjectManager:OnEnemyHeroLoad(function(hero) if hero.charName == "Teemo" then gsoIsTeemo = true end end)
-        end
-        
         function __gsoCursor:IsCursorReady()
                 return gsoCursorReady
         end
