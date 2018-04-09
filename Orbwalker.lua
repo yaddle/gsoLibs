@@ -204,7 +204,7 @@ class "__gsoOrbwalker"
                         else
                                 self:AttackMove()
                         end
-                elseif _G.gsoSDK.Cursor:IsCursorReady() and Game.Timer() < gsoLastMouseDown + 1 then
+                elseif Game.Timer() < gsoLastMouseDown + 1 then
                         Control.mouse_event(MOUSEEVENTF_RIGHTDOWN)
                         gsoLastMouseDown = 0
                 end
