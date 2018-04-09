@@ -96,7 +96,7 @@ class "__gsoOrbwalker"
         
         function __gsoOrbwalker:Attack(unit)
                 gsoResetAttack = false
-                _G.gsoSDK.Cursor:SetCursor(cursorPos, unit.pos, 0.05)
+                _G.gsoSDK.Cursor:SetCursor(cursorPos, unit.pos, 0.06)
                 Control.SetCursorPos(unit.pos)
                 Control.KeyDown(HK_TCO)
                 Control.mouse_event(MOUSEEVENTF_RIGHTDOWN)
@@ -123,7 +123,7 @@ class "__gsoOrbwalker"
                         return true
                 end
                 local animDelay = gsoMenu.delays.animdelay:Value() * 0.001
-                if Game.Timer() < gsoLastAttackLocal + myHero.attackData.animationTime + gsoLastAttackDiff + animDelay - _G.gsoSDK.Utilities:GetMinLatency() then
+                if Game.Timer() < gsoLastAttackLocal + myHero.attackData.animationTime + animDelay then -- + gsoLastAttackDiff  - _G.gsoSDK.Utilities:GetMinLatency()
                         return false
                 end
                 return true
@@ -134,7 +134,7 @@ class "__gsoOrbwalker"
                         return false
                 end
                 local windUpDelay = gsoMenu.delays.windupdelay:Value() * 0.001
-                if Game.Timer() < gsoLastAttackLocal + myHero.attackData.windUpTime + windUpDelay + gsoLastAttackDiff - _G.gsoSDK.Utilities:GetMinLatency() then
+                if Game.Timer() < gsoLastAttackLocal + myHero.attackData.windUpTime + windUpDelay then -- + gsoLastAttackDiff  - _G.gsoSDK.Utilities:GetMinLatency()
                         return false
                 end
                 return true

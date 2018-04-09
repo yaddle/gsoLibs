@@ -6,7 +6,7 @@ local gsoDrawMenu = nil
 class "__gsoCursor"
         
         function __gsoCursor:IsCursorReady()
-                return gsoCursorReady
+                return gsoCursorReady and not gsoSetCursorPos and not gsoExtraSetCursor
         end
         
         function __gsoCursor:CreateDrawMenu(menu)
