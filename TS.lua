@@ -50,8 +50,8 @@ class "__gsoTS"
                                 _G.gsoSDK.ObjectManager:OnEnemyHeroLoad(function(hero) gsoCreatePriorityMenu(hero.charName) end)
                         gsoMenu:MenuElement({ id = "selected", name = "Selected Target", type = MENU })
                                 gsoMenu.selected:MenuElement({ id = "enable", name = "Enable", value = true })
-                        gsoMenu:MenuElement({name = "LaneClear", id = "laneset", type = MENU})
-                                gsoMenu.laneset:MenuElement({ id = "enabledhar", name = "Harass enabled", value = true })
+                        gsoMenu:MenuElement({name = "LastHit Mode", id = "lasthitmode", value = 1, drop = { "Accuracy", "Fast" } })
+                        gsoMenu:MenuElement({name = "LaneClear Harass", id = "laneset", value = true })
         end
         
         function __gsoTS:CreateDrawMenu(menu)
@@ -150,7 +150,7 @@ class "__gsoTS"
                 for i = 1, #enemyTurrets do
                         return enemyTurrets[i]
                 end
-                if gsoMenu.laneset.enabledhar:Value() then
+                if gsoMenu.laneset:Value() then
                         local result = self:GetComboTarget()
                         if result then return result end
                 end
@@ -169,7 +169,7 @@ class "__gsoTS"
         function __gsoTS:Tick()
                 local enemyMinions = _G.gsoSDK.ObjectManager:GetEnemyMinions(myHero.range + myHero.boundingRadius - 35, true)
                 local allyMinions = _G.gsoSDK.ObjectManager:GetAllyMinions(1500, false)
-                local lastHitMode = "accuracy"
+                local lastHitMode = gsoMenu.lasthitmode:Value() == 1 and "accuracy" or "fast"
                 local cacheFarmMinions = {}
                 for i = 1, #enemyMinions do
                         local enemyMinion = enemyMinions[i]

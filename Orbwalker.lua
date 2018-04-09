@@ -13,7 +13,35 @@ local gsoLastTarget = nil
 local gsoTestCount = 0
 local gsoTestStartTime = 0
 local gsoLastAttackDiff = 0
+local gsoBaseAASpeed = 1 / myHero.attackData.animationTime / myHero.attackSpeed
+local gsoBaseWindUp = myHero.attackData.windUpTime / myHero.attackData.animationTime
 local gsoAttackEndTime = myHero.attackData.endTime + 0.1
+local gsoWindUpTime = myHero.attackData.windUpTime
+local gsoAnimTime = myHero.attackData.animationTime
+
+local function gsoGetAttackSpeed()
+        return myHero.attackSpeed
+end
+
+local function gsoSetAttackTimers()
+        gsoBaseAASpeed = 1 / myHero.attackData.animationTime / myHero.attackSpeed
+        gsoBaseWindUp = myHero.attackData.windUpTime / myHero.attackData.animationTime
+        local hasLethalTempo = false
+        for i = 0, myHero.buffCount do
+                local buff = myHero:GetBuff(i)
+                if buff and buff.count > 0 and buff.name:lower():find("flowofbattleempowered") then
+                        hasLethalTempo = true
+                        break
+                end
+        end
+        local aaSpeed = gsoGetAttackSpeed() * gsoBaseAASpeed
+        local numAS = aaSpeed >= 2.5 and 2.5 or aaSpeed
+        numAS = hasLethalTempo and aaSpeed or numAS
+        local animT = 1 / numAS
+        local windUpT = animT * gsoBaseWindUp
+        gsoAnimTime = animT > myHero.attackData.animationTime and animT or myHero.attackData.animationTime
+        gsoWindUpTime = windUpT > myHero.attackData.windUpTime and windUpT or myHero.attackData.windUpTime
+end
 
 local function gsoCheckTeemoBlind()
         for i = 0, gsoMyHero.buffCount do
@@ -46,9 +74,9 @@ class "__gsoOrbwalker"
         function __gsoOrbwalker:CreateMenu(menu)
                 gsoMenu = menu:MenuElement({name = "Orbwalker", id = "orb", type = MENU, leftIcon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/orb.png" })
                         gsoMenu:MenuElement({name = "Delays", id = "delays", type = MENU})
-                                gsoMenu.delays:MenuElement({name = "Enable DPS Test [ for Extra Anim Delay ]",  id = "enabled", value = false})
-                                gsoMenu.delays:MenuElement({name = "Extra WindUp Delay", id = "windupdelay", value = -80, min = -125, max = 125, step = 1 })
-                                gsoMenu.delays:MenuElement({name = "Extra Anim Delay", id = "animdelay", value = 25, min = -125, max = 125, step = 1 })
+                                gsoMenu.delays:MenuElement({name = "Enable DPS Test [ Test Extra Anim Delay ]",  id = "enabled", value = false})
+                                gsoMenu.delays:MenuElement({name = "Extra WindUp Delay", id = "windupdelay", value = 90, min = 0, max = 200, step = 10 })
+                                gsoMenu.delays:MenuElement({name = "Extra Anim Delay", id = "animdelay", value = 10, min = 0, max = 15, step = 5 })
                                 gsoMenu.delays:MenuElement({name = "Extra LastHit Delay", id = "lhDelay", value = 0, min = -50, max = 50, step = 1 })
                                 gsoMenu.delays:MenuElement({name = "Extra Move Delay", id = "humanizer", value = 200, min = 120, max = 300, step = 10 })
                         gsoMenu:MenuElement({name = "Keys", id = "keys", type = MENU})
@@ -123,7 +151,7 @@ class "__gsoOrbwalker"
                         return true
                 end
                 local animDelay = gsoMenu.delays.animdelay:Value() * 0.001
-                if Game.Timer() < gsoLastAttackLocal + myHero.attackData.animationTime + animDelay then -- + gsoLastAttackDiff  - _G.gsoSDK.Utilities:GetMinLatency()
+                if Game.Timer() < gsoLastAttackLocal + gsoAnimTime + animDelay then -- + gsoLastAttackDiff  - _G.gsoSDK.Utilities:GetMinLatency()
                         return false
                 end
                 return true
@@ -134,7 +162,7 @@ class "__gsoOrbwalker"
                         return false
                 end
                 local windUpDelay = gsoMenu.delays.windupdelay:Value() * 0.001
-                if Game.Timer() < gsoLastAttackLocal + myHero.attackData.windUpTime + windUpDelay then -- + gsoLastAttackDiff  - _G.gsoSDK.Utilities:GetMinLatency()
+                if Game.Timer() < gsoLastAttackLocal + gsoWindUpTime + windUpDelay then -- + gsoLastAttackDiff  - _G.gsoSDK.Utilities:GetMinLatency()
                         return false
                 end
                 return true
@@ -169,6 +197,7 @@ class "__gsoOrbwalker"
                                 end
                         end
                 end
+                -- RESET ATTACK
                 if gsoLastAttackLocal > gsoLastAttackServer and Game.Timer() > gsoLastAttackLocal + 0.15 + _G.gsoSDK.Utilities:GetMaxLatency() then
                         if gsoMenu.delays.enabled:Value() then
                                 print("reset attack1")
@@ -180,6 +209,8 @@ class "__gsoOrbwalker"
                         end
                         gsoLastAttackLocal = 0
                 end
+                -- ATTACK TIMERS
+                gsoSetAttackTimers()
                 -- CHECK IF CAN ORBWALK
                 local isEvading = ExtLibEvade and ExtLibEvade.Evading
                 if not _G.gsoSDK.Cursor:IsCursorReady() or Game.IsChatOpen() or isEvading then
