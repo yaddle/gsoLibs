@@ -2,6 +2,7 @@ local gsoIsTeemo = false
 local gsoIsBlindedByTeemo = false
 local gsoLastAttackLocal = 0
 local gsoLastAttackServer = 0
+local gsoLastAttackServerSpell = 0
 local gsoLastMoveLocal = 0
 local gsoMenu = nil
 local gsoDrawMenuMe = nil
@@ -18,6 +19,17 @@ local gsoBaseWindUp = myHero.attackData.windUpTime / myHero.attackData.animation
 local gsoAttackEndTime = myHero.attackData.endTime + 0.1
 local gsoWindUpTime = myHero.attackData.windUpTime
 local gsoAnimTime = myHero.attackData.animationTime
+local gsoNoAttacks = {
+    ["volleyattack"] = true,
+    ["volleyattackwithsound"] = true,
+    ["sivirwattackbounce"] = true,
+    ["asheqattacknoonhit"] = true
+}
+local gsoAttacks = {
+    ["caitlynheadshotmissile"] = true,
+    ["quinnwenhanced"] = true,
+    ["viktorqbuff"] = true
+}
 
 local function gsoGetAttackSpeed()
         return myHero.attackSpeed
@@ -73,8 +85,8 @@ class "__gsoOrbwalker"
         
         function __gsoOrbwalker:CreateMenu(menu)
                 gsoMenu = menu:MenuElement({name = "Orbwalker", id = "orb", type = MENU, leftIcon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/orb.png" })
+                        gsoMenu:MenuElement({name = "Debug Mode Enabled",  id = "enabled", value = false})
                         gsoMenu:MenuElement({name = "Delays", id = "delays", type = MENU})
-                                gsoMenu.delays:MenuElement({name = "Enable DPS Test [ Test Extra Anim Delay ]",  id = "enabled", value = false})
                                 gsoMenu.delays:MenuElement({name = "Extra WindUp Delay", id = "windupdelay", value = 90, min = 0, max = 200, step = 10 })
                                 gsoMenu.delays:MenuElement({name = "Extra Anim Delay", id = "animdelay", value = 10, min = 0, max = 15, step = 5 })
                                 gsoMenu.delays:MenuElement({name = "Extra LastHit Delay", id = "lhDelay", value = 0, min = -50, max = 50, step = 1 })
@@ -185,7 +197,7 @@ class "__gsoOrbwalker"
                         gsoLastAttackDiff = serverStart - gsoLastAttackLocal
                         gsoLastAttackServer = Game.Timer()
                         gsoAttackEndTime = myHero.attackData.endTime
-                        if gsoMenu.delays.enabled:Value() then
+                        if gsoMenu.enabled:Value() then
                                 if gsoTestCount == 0 then
                                         gsoTestStartTime = Game.Timer()
                                 end
@@ -197,15 +209,31 @@ class "__gsoOrbwalker"
                                 end
                         end
                 end
+                -- SPELL ATTACK TIME
+                local aSpell = myHero.activeSpell
+                if aSpell and aSpell.valid and aSpell.startTime > gsoServerStart then
+                        local aSpellName = aSpell.name:lower()
+                        if not gsoNoAttacks[aSpellName] and (aSpellName:find("attack") or gsoAttacks[aSpellName]) then
+                                gsoLastAttackServerSpell = Game.Timer()
+                                --[[gsoServerStart = aSpell.startTime
+                                gsoServerWindup = aSpell.windup
+                                gsoServerAnim = aSpell.animation--]]
+                        end
+                end
                 -- RESET ATTACK
                 if gsoLastAttackLocal > gsoLastAttackServer and Game.Timer() > gsoLastAttackLocal + 0.15 + _G.gsoSDK.Utilities:GetMaxLatency() then
-                        if gsoMenu.delays.enabled:Value() then
+                        if gsoMenu.enabled:Value() then
                                 print("reset attack1")
                         end
                         gsoLastAttackLocal = 0
                 elseif gsoLastAttackLocal < gsoLastAttackServer and Game.Timer() < gsoLastAttackLocal + myHero.attackData.windUpTime and myHero.pathing.hasMovePath then
-                        if gsoMenu.delays.enabled:Value() then
+                        if gsoMenu.enabled:Value() then
                                 print("reset attack2")
+                        end
+                        gsoLastAttackLocal = 0
+                elseif gsoLastAttackLocal > gsoLastAttackServerSpell and Game.Timer() > gsoLastAttackLocal + myHero.attackData.windUpTime then
+                        if gsoMenu.enabled:Value() then
+                                print("reset attack3")
                         end
                         gsoLastAttackLocal = 0
                 end
