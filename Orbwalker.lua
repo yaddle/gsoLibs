@@ -221,7 +221,7 @@ class "__gsoOrbwalker"
                         end
                 end
                 -- RESET ATTACK
-                if gsoLastAttackLocal > gsoLastAttackServer and Game.Timer() > gsoLastAttackLocal + 0.15 + _G.gsoSDK.Utilities:GetMaxLatency() then
+                if gsoLastAttackLocal > gsoLastAttackServer and Game.Timer() > gsoLastAttackLocal + 0.075 + _G.gsoSDK.Utilities:GetMaxLatency() then
                         if gsoMenu.enabled:Value() then
                                 print("reset attack1")
                         end
