@@ -34,6 +34,7 @@ class "__gsoOrbwalker"
                 if gsoIsTeemo then gsoIsBlindedByTeemo = gsoCheckTeemoBlind() end
                 -- SERVER ATTACK START TIME
                 if myHero.attackData.endTime > gsoAttackEndTime then
+                        --gsoLastAttackServer = myHero.attackData.endTime - myHero.attackData.animationTime - myHero.attackData.windUpTime
                         gsoLastAttackServer = Game.Timer()
                         gsoAttackEndTime = myHero.attackData.endTime
                         if gsoMenu.delays.enabled:Value() then
@@ -48,7 +49,7 @@ class "__gsoOrbwalker"
                                 end
                         end
                 end
-                if gsoLastAttackLocal > gsoLastAttackServer and Game.Timer() > gsoLastAttackLocal + 0.11 + _G.gsoSDK.Utilities:GetMaxLatency() then
+                if gsoLastAttackLocal > gsoLastAttackServer and Game.Timer() > gsoLastAttackLocal + 0.15 + _G.gsoSDK.Utilities:GetMaxLatency() then
                         if gsoMenu.delays.enabled:Value() then
                                 print("reset attack1")
                         end
@@ -122,12 +123,12 @@ class "__gsoOrbwalker"
         
         function __gsoOrbwalker:AttackMove(unit)
                 gsoLastTarget = nil
-                local latency = _G.gsoSDK.Utilities.GetMinLatency() + _G.gsoSDK.Utilities.GetMaxLatency()
-                latency = latency * 0.5
-                local canAttack = gsoResetAttack or Game.Timer() > gsoLastAttackLocal + myHero.attackData.animationTime + latency + (gsoMenu.delays.animdelay:Value() * 0.001)
+                local canAttack = Game.Timer() > gsoLastAttackLocal + myHero.attackData.animationTime --+ (gsoMenu.delays.animdelay:Value() * 0.001)-- and Game.Timer() > gsoLastAttackServer + myHero.attackData.animationTime
+                canAttack = gsoResetAttack or canAttack
+                local canMove = true--Game.Timer() > gsoLastAttackServer + myHero.attackData.windUpTime - (_G.gsoSDK.Utilities.GetMinLatency()*0.5)
                 if unit and unit.pos and unit.pos:ToScreen().onScreen and not gsoIsBlindedByTeemo and canAttack then
                         self:Attack(unit)
-                elseif Game.Timer() > gsoLastAttackLocal + myHero.attackData.windUpTime+ latency + (gsoMenu.delays.windupdelay:Value() * 0.001) and Game.Timer() > gsoLastMoveLocal then
+                elseif canMove and Game.Timer() > gsoLastAttackLocal + myHero.attackData.windUpTime + (gsoMenu.delays.windupdelay:Value() * 0.001) and Game.Timer() > gsoLastMoveLocal then
                         self:Move()
                 end
         end
@@ -136,8 +137,8 @@ class "__gsoOrbwalker"
                 gsoMenu = menu:MenuElement({name = "Orbwalker", id = "orb", type = MENU, leftIcon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/orb.png" })
                         gsoMenu:MenuElement({name = "Delays", id = "delays", type = MENU})
                                 gsoMenu.delays:MenuElement({name = "Enable DPS Test [ for Extra Anim Delay ]",  id = "enabled", value = false})
-                                gsoMenu.delays:MenuElement({name = "Extra WindUp Delay", id = "windupdelay", value = 100, min = 0, max = 300, step = 10 })
-                                gsoMenu.delays:MenuElement({name = "Extra Anim Delay", id = "animdelay", value = 100, min = 0, max = 300, step = 10 })
+                                gsoMenu.delays:MenuElement({name = "Extra WindUp Delay", id = "windupdelay", value = 0, min = -100, max = 300, step = 10 })
+                                gsoMenu.delays:MenuElement({name = "Extra Anim Delay", id = "animdelay", value = 0, min = -100, max = 300, step = 10 })
                                 gsoMenu.delays:MenuElement({name = "Extra LastHit Delay", id = "lhDelay", value = 0, min = -50, max = 50, step = 1 })
                                 gsoMenu.delays:MenuElement({name = "Extra Move Delay", id = "humanizer", value = 200, min = 120, max = 300, step = 10 })
                         gsoMenu:MenuElement({name = "Keys", id = "keys", type = MENU})
