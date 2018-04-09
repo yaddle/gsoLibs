@@ -221,7 +221,7 @@ class "__gsoOrbwalker"
                         end
                 end
                 -- RESET ATTACK
-                if gsoLastAttackLocal > gsoLastAttackServer and Game.Timer() > gsoLastAttackLocal + 0.075 + _G.gsoSDK.Utilities:GetMaxLatency() then
+                if gsoLastAttackLocal > gsoLastAttackServer and Game.Timer() > gsoLastAttackLocal + myHero.attackData.windUpTime + 0.1 + _G.gsoSDK.Utilities:GetMaxLatency() then
                         if gsoMenu.enabled:Value() then
                                 print("reset attack1")
                         end
@@ -231,7 +231,7 @@ class "__gsoOrbwalker"
                                 print("reset attack2")
                         end
                         gsoLastAttackLocal = 0
-                elseif gsoLastAttackLocal > gsoLastAttackServerSpell and Game.Timer() > gsoLastAttackLocal + myHero.attackData.windUpTime + 0.1 then
+                elseif gsoLastAttackLocal > gsoLastAttackServerSpell and Game.Timer() > gsoLastAttackLocal + myHero.attackData.windUpTime + 0.1 + _G.gsoSDK.Utilities:GetMaxLatency() then
                         if gsoMenu.enabled:Value() then
                                 print("reset attack3")
                         end
