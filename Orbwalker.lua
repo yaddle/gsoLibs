@@ -4,6 +4,7 @@ local gsoLastAttackLocal = 0
 local gsoLastAttackServer = 0
 local gsoLastAttackServerSpell = 0
 local gsoLastMoveLocal = 0
+local gsoServerStart = 0
 local gsoMenu = nil
 local gsoDrawMenuMe = nil
 local gsoDrawMenuHe = nil
@@ -85,17 +86,16 @@ class "__gsoOrbwalker"
         
         function __gsoOrbwalker:CreateMenu(menu)
                 gsoMenu = menu:MenuElement({name = "Orbwalker", id = "orb", type = MENU, leftIcon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/orb.png" })
-                        gsoMenu:MenuElement({name = "Debug Mode Enabled",  id = "enabled", value = false})
-                        gsoMenu:MenuElement({name = "Delays", id = "delays", type = MENU})
-                                gsoMenu.delays:MenuElement({name = "Extra WindUp Delay", id = "windupdelay", value = 90, min = 0, max = 200, step = 10 })
-                                gsoMenu.delays:MenuElement({name = "Extra Anim Delay", id = "animdelay", value = 10, min = 0, max = 15, step = 5 })
-                                gsoMenu.delays:MenuElement({name = "Extra LastHit Delay", id = "lhDelay", value = 0, min = -50, max = 50, step = 1 })
-                                gsoMenu.delays:MenuElement({name = "Extra Move Delay", id = "humanizer", value = 200, min = 120, max = 300, step = 10 })
+                        gsoMenu:MenuElement({name = "Extra WindUp Delay", id = "windupdelay", value = 90, min = 0, max = 200, step = 10 })
+                        gsoMenu:MenuElement({name = "Extra Anim Delay", id = "animdelay", value = 10, min = 0, max = 15, step = 5 })
+                        gsoMenu:MenuElement({name = "Extra LastHit Delay", id = "lhDelay", value = 0, min = -50, max = 50, step = 1 })
+                        gsoMenu:MenuElement({name = "Extra Move Delay", id = "humanizer", value = 200, min = 120, max = 300, step = 10 })
                         gsoMenu:MenuElement({name = "Keys", id = "keys", type = MENU})
                                 gsoMenu.keys:MenuElement({name = "Combo Key", id = "combo", key = string.byte(" ")})
                                 gsoMenu.keys:MenuElement({name = "Harass Key", id = "harass", key = string.byte("C")})
                                 gsoMenu.keys:MenuElement({name = "LastHit Key", id = "lasthit", key = string.byte("X")})
                                 gsoMenu.keys:MenuElement({name = "LaneClear Key", id = "laneclear", key = string.byte("V")})
+                        gsoMenu:MenuElement({name = "Debug Mode Enabled",  id = "enabled", value = false})
         end
         
         function __gsoOrbwalker:CreateDrawMenu(menu)
@@ -152,7 +152,7 @@ class "__gsoOrbwalker"
                 gsoLastMovePos = mousePos
                 Control.mouse_event(MOUSEEVENTF_RIGHTDOWN)
                 Control.mouse_event(MOUSEEVENTF_RIGHTUP)
-                gsoLastMoveLocal = Game.Timer() + gsoMenu.delays.humanizer:Value() * 0.001
+                gsoLastMoveLocal = Game.Timer() + gsoMenu.humanizer:Value() * 0.001
         end
         
         function __gsoOrbwalker:CanAttack()
@@ -162,7 +162,7 @@ class "__gsoOrbwalker"
                 if gsoResetAttack then
                         return true
                 end
-                local animDelay = gsoMenu.delays.animdelay:Value() * 0.001
+                local animDelay = gsoMenu.animdelay:Value() * 0.001
                 if Game.Timer() < gsoLastAttackLocal + gsoAnimTime + animDelay then -- + gsoLastAttackDiff  - _G.gsoSDK.Utilities:GetMinLatency()
                         return false
                 end
@@ -173,7 +173,7 @@ class "__gsoOrbwalker"
                 if Game.Timer() < gsoLastMoveLocal then
                         return false
                 end
-                local windUpDelay = gsoMenu.delays.windupdelay:Value() * 0.001
+                local windUpDelay = gsoMenu.windupdelay:Value() * 0.001
                 if Game.Timer() < gsoLastAttackLocal + gsoWindUpTime + windUpDelay then -- + gsoLastAttackDiff  - _G.gsoSDK.Utilities:GetMinLatency()
                         return false
                 end
@@ -215,8 +215,8 @@ class "__gsoOrbwalker"
                         local aSpellName = aSpell.name:lower()
                         if not gsoNoAttacks[aSpellName] and (aSpellName:find("attack") or gsoAttacks[aSpellName]) then
                                 gsoLastAttackServerSpell = Game.Timer()
-                                --[[gsoServerStart = aSpell.startTime
-                                gsoServerWindup = aSpell.windup
+                                gsoServerStart = aSpell.startTime
+                                --[[gsoServerWindup = aSpell.windup
                                 gsoServerAnim = aSpell.animation--]]
                         end
                 end
