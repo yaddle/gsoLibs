@@ -86,15 +86,15 @@ class "__gsoOrbwalker"
         
         function __gsoOrbwalker:CreateMenu(menu)
                 gsoMenu = menu:MenuElement({name = "Orbwalker", id = "orb", type = MENU, leftIcon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/orb.png" })
-                        gsoMenu:MenuElement({name = "Extra WindUp Delay", id = "windupdelay", value = 90, min = 0, max = 200, step = 10 })
-                        gsoMenu:MenuElement({name = "Extra Anim Delay", id = "animdelay", value = 10, min = 0, max = 15, step = 5 })
-                        gsoMenu:MenuElement({name = "Extra LastHit Delay", id = "lhDelay", value = 0, min = -50, max = 50, step = 1 })
-                        gsoMenu:MenuElement({name = "Extra Move Delay", id = "humanizer", value = 200, min = 120, max = 300, step = 10 })
                         gsoMenu:MenuElement({name = "Keys", id = "keys", type = MENU})
                                 gsoMenu.keys:MenuElement({name = "Combo Key", id = "combo", key = string.byte(" ")})
                                 gsoMenu.keys:MenuElement({name = "Harass Key", id = "harass", key = string.byte("C")})
                                 gsoMenu.keys:MenuElement({name = "LastHit Key", id = "lasthit", key = string.byte("X")})
                                 gsoMenu.keys:MenuElement({name = "LaneClear Key", id = "laneclear", key = string.byte("V")})
+                        gsoMenu:MenuElement({name = "Extra WindUp Delay", id = "windupdelay", value = 90, min = 0, max = 200, step = 10 })
+                        gsoMenu:MenuElement({name = "Extra Anim Delay", id = "animdelay", value = 10, min = 0, max = 15, step = 5 })
+                        gsoMenu:MenuElement({name = "Extra LastHit Delay", id = "lhDelay", value = 0, min = -50, max = 50, step = 1 })
+                        gsoMenu:MenuElement({name = "Extra Move Delay", id = "humanizer", value = 200, min = 120, max = 300, step = 10 })
                         gsoMenu:MenuElement({name = "Debug Mode Enabled",  id = "enabled", value = false})
         end
         
