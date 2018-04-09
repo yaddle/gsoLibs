@@ -95,7 +95,7 @@ class "__gsoOrbwalker"
                         gsoMenu:MenuElement({name = "Extra Anim Delay", id = "animdelay", value = 10, min = 0, max = 15, step = 5 })
                         gsoMenu:MenuElement({name = "Extra LastHit Delay", id = "lhDelay", value = 0, min = -50, max = 50, step = 1 })
                         gsoMenu:MenuElement({name = "Extra Move Delay", id = "humanizer", value = 200, min = 120, max = 300, step = 10 })
-                        gsoMenu:MenuElement({name = "Debug Mode Enabled",  id = "enabled", value = false})
+                        gsoMenu:MenuElement({name = "Debug Mode",  id = "enabled", value = false})
         end
         
         function __gsoOrbwalker:CreateDrawMenu(menu)
