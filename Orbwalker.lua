@@ -231,7 +231,7 @@ class "__gsoOrbwalker"
                                 print("reset attack2")
                         end
                         gsoLastAttackLocal = 0
-                elseif gsoLastAttackLocal > gsoLastAttackServerSpell and Game.Timer() > gsoLastAttackLocal + myHero.attackData.windUpTime then
+                elseif gsoLastAttackLocal > gsoLastAttackServerSpell and Game.Timer() > gsoLastAttackLocal + myHero.attackData.windUpTime + 0.1 then
                         if gsoMenu.enabled:Value() then
                                 print("reset attack3")
                         end
