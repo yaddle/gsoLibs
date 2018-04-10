@@ -23,6 +23,7 @@ local gsoAttackEndTime = myHero.attackData.endTime + 0.1
 local gsoWindUpTime = myHero.attackData.windUpTime
 local gsoAnimTime = myHero.attackData.animationTime
 local gsoUOLoaded = { Icy = false, Gamsteron = false, Gos = false }
+local gsoOnPreAttackC = {}
 local gsoNoAttacks = {
     ["volleyattack"] = true,
     ["volleyattackwithsound"] = true,
@@ -69,7 +70,6 @@ class "__gsoOrbwalker"
         
         function __gsoOrbwalker:__init()
                 self.Loaded = false
-                self.UOL_Loaded = { Icy = false, Gamsteron = false, Gos = false }
                 _G.gsoSDK.ObjectManager:OnEnemyHeroLoad(function(hero) if hero.charName == "Teemo" then gsoIsTeemo = true end end)
         end
         
@@ -165,6 +165,10 @@ class "__gsoOrbwalker"
                                 self:DisableGamsteronOrb()
                         end
                 end
+        end
+        function __gsoOrbwalker:UOL_OnPreAttack(func)
+                _G.gsoSDK.Utilities:AddAction(function() if _G.SDK and _G.SDK.Orbwalker then _G.SDK.Orbwalker:OnPreAttack(func) end, 2)
+                gsoOnPreAttackC[#gsoOnPreAttackC+1] = func
         end
         function __gsoOrbwalker:UOL_CanMove()
                 if gsoMainMenu.orbsel:Value() == 1 then
@@ -290,7 +294,13 @@ class "__gsoOrbwalker"
         function __gsoOrbwalker:AttackMove(unit)
                 gsoLastTarget = nil
                 if unit and unit.pos:ToScreen().onScreen and self:CanAttack() then
-                        self:Attack(unit)
+                        local args = { Target = unit, Process = true }
+                        for i = 1, #gsoOnPreAttackC do
+                                gsoOnPreAttackC[i](args)
+                        end
+                        if args.Process and args.Target ~= nil then
+                                self:Attack(Target)
+                        end
                 elseif Game.Timer() > gsoLastMoveLocal and self:CanMove() then
                         self:Move()
                 end
