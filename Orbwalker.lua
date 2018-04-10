@@ -190,7 +190,7 @@ class "__gsoOrbwalker"
                 elseif gsoMainMenu.orbsel:Value() == 2 then
                         return GOS:IsAttacking()
                 elseif gsoMainMenu.orbsel:Value() == 3 then
-                        return IsAutoAttacking(myHero)
+                        return _G.SDK.Orbwalker:IsAutoAttacking(myHero)
                 end
         end
         function __gsoOrbwalker:UOL_LoadedIcy()
