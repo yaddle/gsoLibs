@@ -26,7 +26,10 @@ local gsoUOLoaded = { Icy = false, Gamsteron = false, Gos = false }
 local gsoOnPreAttackC = {}
 local gsoOnPostAttackC = {}
 local gsoOnAttackC = {}
+local gsoOnPreMoveC = {}
 local gsoPostAttackBool = false
+local gsoAttackEnabled = true
+local gsoMovementEnabled = true
 local gsoNoAttacks = {
     ["volleyattack"] = true,
     ["volleyattackwithsound"] = true,
@@ -169,6 +172,16 @@ class "__gsoOrbwalker"
                         end
                 end
         end
+        function __gsoOrbwalker:UOL_SetMovement(boolean)
+                if _G.SDK and _G.SDK.Orbwalker then _G.SDK.Orbwalker:SetMovement(boolean) end
+                gsoMovementEnabled = boolean
+                GOS:BlockMovement(not boolean)
+        end
+        function __gsoOrbwalker:UOL_SetAttack(boolean)
+                if _G.SDK and _G.SDK.Orbwalker then _G.SDK.Orbwalker:SetAttack(boolean) end
+                gsoAttackEnabled = boolean
+                GOS:BlockAttack(not boolean)
+        end
         function __gsoOrbwalker:UOL_OnPreAttack(func)
                 _G.gsoSDK.Utilities:AddAction(function() if _G.SDK and _G.SDK.Orbwalker then _G.SDK.Orbwalker:OnPreAttack(func) end, 2)
                 gsoOnPreAttackC[#gsoOnPreAttackC+1] = func
@@ -180,6 +193,10 @@ class "__gsoOrbwalker"
         function __gsoOrbwalker:UOL_OnAttack(func)
                 _G.gsoSDK.Utilities:AddAction(function() if _G.SDK and _G.SDK.Orbwalker then _G.SDK.Orbwalker:OnAttack(func) end, 2)
                 gsoOnAttackC[#gsoOnAttackC+1] = func
+        end
+        function __gsoOrbwalker:UOL_OnPreMovement(func)
+                _G.gsoSDK.Utilities:AddAction(function() if _G.SDK and _G.SDK.Orbwalker then _G.SDK.Orbwalker:OnPreMovement(func) end, 2)
+                gsoOnPreMoveC[#gsoOnPreMoveC+1] = func
         end
         function __gsoOrbwalker:UOL_CanMove()
                 if gsoMainMenu.orbsel:Value() == 1 then
@@ -278,6 +295,15 @@ class "__gsoOrbwalker"
                 gsoLastMoveLocal = Game.Timer() + gsoMenu.humanizer:Value() * 0.001
         end
         
+        function __gsoOrbwalker:MoveToPos(pos)
+                if Control.IsKeyDown(2) then gsoLastMouseDown = Game.Timer() end
+                _G.gsoSDK.Cursor:SetCursor(cursorPos, pos, 0.06)
+                Control.SetCursorPos(pos)
+                Control.mouse_event(MOUSEEVENTF_RIGHTDOWN)
+                Control.mouse_event(MOUSEEVENTF_RIGHTUP)
+                gsoLastMoveLocal = Game.Timer() + gsoMenu.humanizer:Value() * 0.001
+        end
+        
         function __gsoOrbwalker:CanAttack()
                 if gsoIsBlindedByTeemo then
                         return false
@@ -304,7 +330,7 @@ class "__gsoOrbwalker"
         
         function __gsoOrbwalker:AttackMove(unit)
                 gsoLastTarget = nil
-                if unit and unit.pos:ToScreen().onScreen and self:CanAttack() then
+                if gsoAttackEnabled and unit and unit.pos:ToScreen().onScreen and self:CanAttack() then
                         local args = { Target = unit, Process = true }
                         for i = 1, #gsoOnPreAttackC do
                                 gsoOnPreAttackC[i](args)
@@ -313,14 +339,30 @@ class "__gsoOrbwalker"
                                 self:Attack(Target)
                                 gsoPostAttackBool = true
                         end
-                elseif Game.Timer() > gsoLastMoveLocal and self:CanMove() then
+                elseif gsoMovementEnabled and self:CanMove() then
                         if gsoPostAttackBool then
                                 for i = 1, #gsoOnPostAttackC do
                                         gsoOnPostAttackC[i]()
                                 end
                                 gsoPostAttackBool = false
                         end
-                        self:Move()
+                        if Game.Timer() > gsoLastMoveLocal then
+                                local args = { Target = nil, Process = true }
+                                for i = 1, #gsoOnPreMoveC do
+                                        gsoOnPreMoveC[i](args)
+                                end
+                                if args.Process then
+                                        if not args.Target then
+                                                self:Move()
+                                        elseif args.Target.x then
+                                                self:MoveToPos(args.Target)
+                                        elseif args.Target.pos then
+                                                self:MoveToPos(args.Target.pos)
+                                        else
+                                                assert("false", "Gamsteron OnPreMovement Event: expected Vector !")
+                                        end
+                                end
+                        end
                 end
         end
         
