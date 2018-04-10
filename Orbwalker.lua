@@ -361,7 +361,7 @@ class "__gsoOrbwalker"
                                         elseif args.Target.pos then
                                                 self:MoveToPos(args.Target.pos)
                                         else
-                                                assert("false", "Gamsteron OnPreMovement Event: expected Vector !")
+                                                assert(false, "Gamsteron OnPreMovement Event: expected Vector !")
                                         end
                                 end
                         end
