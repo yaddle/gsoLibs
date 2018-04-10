@@ -170,6 +170,7 @@ class "__gsoTS"
         end
         
         function __gsoTS:Tick()
+                if not self.mainMenu.orb.enabledorb:Value() then return end
                 local enemyMinions = _G.gsoSDK.ObjectManager:GetEnemyMinions(myHero.range + myHero.boundingRadius - 35, true)
                 local allyMinions = _G.gsoSDK.ObjectManager:GetAllyMinions(1500, false)
                 local lastHitMode = gsoMenu.lasthitmode:Value() == 1 and "accuracy" or "fast"
