@@ -94,30 +94,38 @@ class "__gsoOrbwalker"
         function __gsoOrbwalker:CreateMenu(menu, uolMenu)
                 gsoMainMenu = uolMenu
                 gsoMenu = menu:MenuElement({name = "Orbwalker", id = "orb", type = MENU, leftIcon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/orb.png" })
-                        gsoMenu:MenuElement({name = "Enabled",  id = "enabledorb", value = true})
+                        gsoMenu:MenuElement({name = "Enabled",  id = "enabledorb", tooltip = "Enabled Gamsteron's OnTick and OnDraw - No Attack, Move etc.", value = true})
                         gsoMenu:MenuElement({name = "Keys", id = "keys", type = MENU})
                                 gsoMenu.keys:MenuElement({name = "Combo Key", id = "combo", key = string.byte(" ")})
                                 gsoMenu.keys:MenuElement({name = "Harass Key", id = "harass", key = string.byte("C")})
                                 gsoMenu.keys:MenuElement({name = "LastHit Key", id = "lasthit", key = string.byte("X")})
                                 gsoMenu.keys:MenuElement({name = "LaneClear Key", id = "laneclear", key = string.byte("V")})
                                 gsoMenu.keys:MenuElement({name = "Flee Key", id = "flee", key = string.byte("A")})
-                        gsoMenu:MenuElement({name = "Extra WindUp Delay [ less = better KITE ]", id = "windupdelay", value = 20, min = 0, max = 150, step = 10 })
-                        gsoMenu:MenuElement({name = "Extra Anim Delay [ less = better DPS ]", id = "animdelay", value = 80, min = 0, max = 150, step = 10 })
-                        gsoMenu:MenuElement({name = "Extra LastHit Delay", id = "lhDelay", value = 0, min = -50, max = 50, step = 1 })
-                        gsoMenu:MenuElement({name = "Extra Move Delay", id = "humanizer", value = 200, min = 120, max = 300, step = 10 })
-                        gsoMenu:MenuElement({name = "Debug Mode",  id = "enabled", value = false})
+                        gsoMenu:MenuElement({name = "Extra WindUp Delay", tooltip = "Less Value = Better KITE", id = "windupdelay", value = 20, min = 0, max = 150, step = 10 })
+                        gsoMenu:MenuElement({name = "Extra Anim Delay", tooltip = "Less Value = Better DPS [ for me 80 is ideal ] - lower value than 80 cause slow KITE ! Maybe for your PC ideal value is 0 ? You need test it in debug mode.", id = "animdelay", value = 80, min = 0, max = 150, step = 10 })
+                        gsoMenu:MenuElement({name = "Extra LastHit Delay", tooltip = "Less Value = Faster Last Hit Reaction", id = "lhDelay", value = 0, min = -50, max = 50, step = 1 })
+                        gsoMenu:MenuElement({name = "Extra Move Delay", tooltip = "Less Value = More Movement Clicks Per Sec", id = "humanizer", value = 200, min = 120, max = 300, step = 10 })
+                        gsoMenu:MenuElement({name = "Debug Mode", tooltip = "Will Print Some Data", id = "enabled", value = false})
         end
         
         function __gsoOrbwalker:EnableGamsteronOrb()
                 if not gsoMenu.enabledorb:Value() then gsoMenu.enabledorb:Value(true) end
                 gsoMenu:Hide(false)
                 gsoUOLoaded.Gamsteron = true
+                gsoDrawMenuMe:Hide(false)
+                gsoDrawMenuHe:Hide(false)
+                _G.gsoSDK.TS.mainMenu.gsodraw.lasthit:Hide(false)
+                _G.gsoSDK.TS.mainMenu.gsodraw.almostlasthit:Hide(false)
         end
         
         function __gsoOrbwalker:DisableGamsteronOrb()
                 if gsoMenu.enabledorb:Value() then gsoMenu.enabledorb:Value(false) end
                 gsoMenu:Hide(true)
                 gsoUOLoaded.Gamsteron = false
+                gsoDrawMenuMe:Hide(true)
+                gsoDrawMenuHe:Hide(true)
+                _G.gsoSDK.TS.mainMenu.gsodraw.lasthit:Hide(true)
+                _G.gsoSDK.TS.mainMenu.gsodraw.almostlasthit:Hide(true)
         end
         
         function __gsoOrbwalker:EnableGosOrb()
@@ -172,6 +180,16 @@ class "__gsoOrbwalker"
                                 self:DisableGamsteronOrb()
                         end
                 end
+        end
+        function __gsoOrbwalker:UOL_ResetAttack()
+                if _G.SDK and _G.SDK.Orbwalker then
+                        _G.SDK.Orbwalker.AutoAttackResetted = true
+                        _G.SDK.Orbwalker.LastAutoAttackSent = 0
+                end
+                gsoResetAttack = true
+                GOS.AA.state = 1
+                GOS.castAttack.state = 0
+                GOS.castAttack.casting = GetTickCount() - 1000
         end
         function __gsoOrbwalker:UOL_SetMovement(boolean)
                 if _G.SDK and _G.SDK.Orbwalker then _G.SDK.Orbwalker:SetMovement(boolean) end
