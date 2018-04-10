@@ -131,6 +131,7 @@ class "__gsoOrbwalker"
                 end
         end
         
+        ------------------------------------------------------------------------ UOL START
         function __gsoOrbwalker:UOL()
                 if gsoMainMenu.orbsel:Value() == 1 then
                         self:DisableIcyOrb()
@@ -146,6 +147,34 @@ class "__gsoOrbwalker"
                         self:DisableGamsteronOrb()
                 end
         end
+        function __gsoOrbwalker:UOL_CanMove()
+                if gsoMainMenu.orbsel:Value() == 1 then
+                        return self:CanMove()
+                elseif gsoMainMenu.orbsel:Value() == 2 then
+                        return GOS:CanMove()
+                elseif gsoMainMenu.orbsel:Value() == 3 then
+                        return _G.SDK.Orbwalker:CanMove(myHero)
+                end
+        end
+        function __gsoOrbwalker:UOL_CanAttack()
+                if gsoMainMenu.orbsel:Value() == 1 then
+                        return self:CanAttack()
+                elseif gsoMainMenu.orbsel:Value() == 2 then
+                        return GOS:CanAttack()
+                elseif gsoMainMenu.orbsel:Value() == 3 then
+                        return _G.SDK.Orbwalker:CanAttack(myHero)
+                end
+        end
+        function __gsoOrbwalker:UOL_IsAttacking()
+                if gsoMainMenu.orbsel:Value() == 1 then
+                        return not self:CanMove()
+                elseif gsoMainMenu.orbsel:Value() == 2 then
+                        return GOS:IsAttacking()
+                elseif gsoMainMenu.orbsel:Value() == 3 then
+                        return IsAutoAttacking(myHero)
+                end
+        end
+        ------------------------------------------------------------------------ UOL END
         
         function __gsoOrbwalker:CreateDrawMenu(menu)
                 gsoDrawMenuMe = menu:MenuElement({name = "MyHero Attack Range", id = "me", type = MENU})
@@ -220,9 +249,6 @@ class "__gsoOrbwalker"
         end
         
         function __gsoOrbwalker:CanMove()
-                if Game.Timer() < gsoLastMoveLocal then
-                        return false
-                end
                 local latency = math.min(_G.gsoSDK.Utilities:GetMinLatency(), Game.Latency() * 0.001) * 0.75
                 local windUpDelay = gsoMenu.windupdelay:Value() * 0.001
                 if Game.Timer() < gsoLastAttackLocal + gsoWindUpTime + gsoLastAttackDiff - latency - 0.025 + windUpDelay then
@@ -236,7 +262,7 @@ class "__gsoOrbwalker"
                 gsoLastTarget = nil
                 if unit and unit.pos:ToScreen().onScreen and self:CanAttack() then
                         self:Attack(unit)
-                elseif self:CanMove() then
+                elseif Game.Timer() > gsoLastMoveLocal and self:CanMove() then
                         self:Move()
                 end
         end
