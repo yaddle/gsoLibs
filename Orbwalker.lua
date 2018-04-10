@@ -163,7 +163,7 @@ class "__gsoOrbwalker"
                         self:DisableGamsteronOrb()
                 elseif gsoMainMenu.orbsel:Value() == 3 then
                         if not _G.SDK or not _G.SDK.Orbwalker then
-                                print("To use IC Orbwalker you need load it !")
+                                print("To use IC's Orbwalker you need load it !")
                                 gsoMainMenu.orbsel:Value(1)
                         else
                                 self:EnableIcOrb()
