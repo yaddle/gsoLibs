@@ -68,6 +68,7 @@ class "__gsoOrbwalker"
         
         function __gsoOrbwalker:__init()
                 self.Loaded = false
+                self.UOL_Loaded = { Icy = false, Gamsteron = false, Gos = false }
                 _G.gsoSDK.ObjectManager:OnEnemyHeroLoad(function(hero) if hero.charName == "Teemo" then gsoIsTeemo = true end end)
         end
         
@@ -102,27 +103,32 @@ class "__gsoOrbwalker"
         function __gsoOrbwalker:EnableGamsteronOrb()
                 if not gsoMenu.enabledorb:Value() then gsoMenu.enabledorb:Value(true) end
                 gsoMenu:Hide(false)
+                self.UOL_Loaded.Gamsteron = true
         end
         
         function __gsoOrbwalker:DisableGamsteronOrb()
                 if gsoMenu.enabledorb:Value() then gsoMenu.enabledorb:Value(false) end
                 gsoMenu:Hide(true)
+                self.UOL_Loaded.Gamsteron = false
         end
         
         function __gsoOrbwalker:EnableGosOrb()
                 if not _G.Orbwalker.Enabled:Value() then _G.Orbwalker.Enabled:Value(true) end
                 _G.Orbwalker:Hide(false)
+                self.UOL_Loaded.Gos = true
         end
         
         function __gsoOrbwalker:DisableGosOrb()
                 if _G.Orbwalker.Enabled:Value() then _G.Orbwalker.Enabled:Value(false) end
                 _G.Orbwalker:Hide(true)
+                self.UOL_Loaded.Gos = false
         end
         
         function __gsoOrbwalker:EnableIcyOrb()
                 if _G.SDK and _G.SDK.Orbwalker and _G.SDK.Orbwalker.Loaded then
                         if not _G.SDK.Orbwalker.Menu.Enabled:Value() then _G.SDK.Orbwalker.Menu.Enabled:Value(true) end
                         _G.SDK.Orbwalker.Menu:Hide(false)
+                        self.UOL_Loaded.Icy = true
                 end
         end
         
@@ -130,6 +136,7 @@ class "__gsoOrbwalker"
                 if _G.SDK and _G.SDK.Orbwalker and _G.SDK.Orbwalker.Loaded then
                         if _G.SDK.Orbwalker.Menu.Enabled:Value() then _G.SDK.Orbwalker.Menu.Enabled:Value(false) end
                         _G.SDK.Orbwalker.Menu:Hide(true)
+                        self.UOL_Loaded.Icy = false
                 end
         end
         
