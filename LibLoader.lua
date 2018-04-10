@@ -27,7 +27,7 @@ class "__gsoLibLoader"
                 _G.gsoSDK.Orbwalker = __gsoOrbwalker()
                 -----------------------------------------------------------
                 -- MENU
-                menu:MenuElement({ id = "orbsel", name = "Orbwalker", value = 1, drop = { "Gamsteron", "Gos", "Icy" } })
+                menu:MenuElement({ id = "orbsel", name = "Orbwalker", value = 1, drop = { "Gamsteron", "GOS", "IC" } })
                 _G.gsoSDK.TS:CreateMenu(menu)
                 _G.gsoSDK.Orbwalker:CreateMenu(menu)
                 menu:MenuElement({name = "Drawings", id = "gsodraw", leftIcon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/circles.png", type = MENU })

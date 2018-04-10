@@ -22,7 +22,7 @@ local gsoBaseWindUp = myHero.attackData.windUpTime / myHero.attackData.animation
 local gsoAttackEndTime = myHero.attackData.endTime + 0.1
 local gsoWindUpTime = myHero.attackData.windUpTime
 local gsoAnimTime = myHero.attackData.animationTime
-local gsoUOLoaded = { Icy = false, Gamsteron = false, Gos = false }
+local gsoUOLoaded = { Ic = false, Gamsteron = false, Gos = false }
 local gsoOnPreAttackC = {}
 local gsoOnPostAttackC = {}
 local gsoOnAttackC = {}
@@ -131,19 +131,19 @@ class "__gsoOrbwalker"
                 gsoUOLoaded.Gos = false
         end
         
-        function __gsoOrbwalker:EnableIcyOrb()
+        function __gsoOrbwalker:EnableIcOrb()
                 if _G.SDK and _G.SDK.Orbwalker and _G.SDK.Orbwalker.Loaded then
                         if not _G.SDK.Orbwalker.Menu.Enabled:Value() then _G.SDK.Orbwalker.Menu.Enabled:Value(true) end
                         _G.SDK.Orbwalker.Menu:Hide(false)
-                        gsoUOLoaded.Icy = true
+                        gsoUOLoaded.Ic = true
                 end
         end
         
-        function __gsoOrbwalker:DisableIcyOrb()
+        function __gsoOrbwalker:DisableIcOrb()
                 if _G.SDK and _G.SDK.Orbwalker and _G.SDK.Orbwalker.Loaded then
                         if _G.SDK.Orbwalker.Menu.Enabled:Value() then _G.SDK.Orbwalker.Menu.Enabled:Value(false) end
                         _G.SDK.Orbwalker.Menu:Hide(true)
-                        gsoUOLoaded.Icy = false
+                        gsoUOLoaded.Ic = false
                 end
         end
         
@@ -154,19 +154,19 @@ class "__gsoOrbwalker"
                 end
                 if not self.Loaded then return end
                 if gsoMainMenu.orbsel:Value() == 1 then
-                        self:DisableIcyOrb()
+                        self:DisableIcOrb()
                         self:DisableGosOrb()
                         self:EnableGamsteronOrb()
                 elseif gsoMainMenu.orbsel:Value() == 2 then
-                        self:DisableIcyOrb()
+                        self:DisableIcOrb()
                         self:EnableGosOrb()
                         self:DisableGamsteronOrb()
                 elseif gsoMainMenu.orbsel:Value() == 3 then
                         if not _G.SDK or not _G.SDK.Orbwalker then
-                                print("To use IcyOrbwalker you need load it !")
+                                print("To use IC Orbwalker you need load it !")
                                 gsoMainMenu.orbsel:Value(1)
                         else
-                                self:EnableIcyOrb()
+                                self:EnableIcOrb()
                                 self:DisableGosOrb()
                                 self:DisableGamsteronOrb()
                         end
@@ -225,8 +225,8 @@ class "__gsoOrbwalker"
                         return _G.SDK.Orbwalker:IsAutoAttacking(myHero)
                 end
         end
-        function __gsoOrbwalker:UOL_LoadedIcy()
-                return gsoUOLoaded.Icy
+        function __gsoOrbwalker:UOL_LoadedIc()
+                return gsoUOLoaded.Ic
         end
         function __gsoOrbwalker:UOL_LoadedGos()
                 return gsoUOLoaded.Gos
