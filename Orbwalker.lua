@@ -94,7 +94,7 @@ class "__gsoOrbwalker"
         function __gsoOrbwalker:CreateMenu(menu, uolMenu)
                 gsoMainMenu = uolMenu
                 gsoMenu = menu:MenuElement({name = "Orbwalker", id = "orb", type = MENU, leftIcon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/orb.png" })
-                        gsoMenu:MenuElement({name = "Enabled",  id = "enabledorb", tooltip = "Enabled Gamsteron's OnTick and OnDraw - No Attack, Move etc.", value = true})
+                        gsoMenu:MenuElement({name = "Enabled",  id = "enabledorb", tooltip = "Enabled Gamsteron's OnTick and OnDraw - Attack, Move, Draw Attack Range etc.", value = true})
                         gsoMenu:MenuElement({name = "Keys", id = "keys", type = MENU})
                                 gsoMenu.keys:MenuElement({name = "Combo Key", id = "combo", key = string.byte(" ")})
                                 gsoMenu.keys:MenuElement({name = "Harass Key", id = "harass", key = string.byte("C")})
