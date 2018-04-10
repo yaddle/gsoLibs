@@ -1,4 +1,5 @@
 local gsoMenu = nil
+local gsoMainMenu = nil
 local gsoDrawSelMenu = nil
 local gsoDrawLHMenu = nil
 local gsoDrawALHMenu = nil
@@ -44,6 +45,7 @@ class "__gsoTS"
         end
         
         function __gsoTS:CreateMenu(menu)
+                gsoMainMenu = menu
                 gsoMenu = menu:MenuElement({name = "Target Selector", id = "ts", type = MENU, leftIcon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/ts.png" })
                         gsoMenu:MenuElement({ id = "Mode", name = "Mode", value = 1, drop = { "Auto", "Closest", "Least Health", "Least Priority" } })
                         gsoMenu:MenuElement({ id = "priority", name = "Priorities", type = MENU })
@@ -204,6 +206,7 @@ class "__gsoTS"
                                 Draw.Circle(gsoSelectedTarget.pos, gsoDrawSelMenu.radius:Value(), gsoDrawSelMenu.width:Value(), gsoDrawSelMenu.color:Value())
                         end
                 end
+                if not gsoMainMenu.orb.enabledorb:Value() then return end
                 if gsoDrawLHMenu.enabled:Value() or gsoDrawALHMenu.enabled:Value() then
                         for i = 1, #gsoFarmMinions do
                                 local minion = gsoFarmMinions[i]

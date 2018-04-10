@@ -1,3 +1,4 @@
+local gsoLoadTime = Game.Timer()
 local gsoIsTeemo = false
 local gsoIsBlindedByTeemo = false
 local gsoLastAttackLocal = 0
@@ -66,6 +67,7 @@ end
 class "__gsoOrbwalker"
         
         function __gsoOrbwalker:__init()
+                self.Loaded = false
                 _G.gsoSDK.ObjectManager:OnEnemyHeroLoad(function(hero) if hero.charName == "Teemo" then gsoIsTeemo = true end end)
         end
         
@@ -133,6 +135,10 @@ class "__gsoOrbwalker"
         
         ------------------------------------------------------------------------ UOL START
         function __gsoOrbwalker:UOL()
+                if not self.Loaded and Game.Timer() > gsoLoadTime + 2.5 then
+                        self.Loaded = true
+                end
+                if not self.Loaded then return end
                 if gsoMainMenu.orbsel:Value() == 1 then
                         self:DisableIcyOrb()
                         self:DisableGosOrb()
@@ -142,9 +148,14 @@ class "__gsoOrbwalker"
                         self:EnableGosOrb()
                         self:DisableGamsteronOrb()
                 elseif gsoMainMenu.orbsel:Value() == 3 then
-                        self:EnableIcyOrb()
-                        self:DisableGosOrb()
-                        self:DisableGamsteronOrb()
+                        if not _G.SDK or not _G.SDK.Orbwalker then
+                                print("To use IcyOrbwalker you need load it !")
+                                gsoMainMenu.orbsel:Value(1)
+                        else
+                                self:EnableIcyOrb()
+                                self:DisableGosOrb()
+                                self:DisableGamsteronOrb()
+                        end
                 end
         end
         function __gsoOrbwalker:UOL_CanMove()
@@ -254,7 +265,7 @@ class "__gsoOrbwalker"
                 if Game.Timer() < gsoLastAttackLocal + gsoWindUpTime + gsoLastAttackDiff - latency - 0.025 + windUpDelay then
                         return false
                 end
-                if gsoLastAttackLocal > gsoLastAttackServer then return false end
+                if gsoLastAttackLocal > gsoLastAttackServer and Game.Timer() < gsoLastAttackLocal + gsoWindUpTime + gsoLastAttackDiff - latency + 0.025 + windUpDelay then return false end
                 return true
         end
         
