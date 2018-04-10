@@ -91,9 +91,9 @@ class "__gsoOrbwalker"
                 return gsoLastTarget
         end
         
-        function __gsoOrbwalker:CreateMenu(menu)
-                gsoMainMenu = menu
-                gsoMenu = gsoMainMenu:MenuElement({name = "Orbwalker", id = "orb", type = MENU, leftIcon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/orb.png" })
+        function __gsoOrbwalker:CreateMenu(menu, uolMenu)
+                gsoMainMenu = uolMenu
+                gsoMenu = menu:MenuElement({name = "Orbwalker", id = "orb", type = MENU, leftIcon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/orb.png" })
                         gsoMenu:MenuElement({name = "Enabled",  id = "enabledorb", value = true})
                         gsoMenu:MenuElement({name = "Keys", id = "keys", type = MENU})
                                 gsoMenu.keys:MenuElement({name = "Combo Key", id = "combo", key = string.byte(" ")})
@@ -184,21 +184,21 @@ class "__gsoOrbwalker"
                 GOS:BlockAttack(not boolean)
         end
         function __gsoOrbwalker:UOL_OnPreAttack(func)
-                _G.gsoSDK.Utilities:AddAction(function() if _G.SDK and _G.SDK.Orbwalker then _G.SDK.Orbwalker:OnPreAttack(func) end, 2)
+                _G.gsoSDK.Utilities:AddAction(function() if _G.SDK and _G.SDK.Orbwalker then _G.SDK.Orbwalker:OnPreAttack(func) end end, 2)
                 gsoOnPreAttackC[#gsoOnPreAttackC+1] = func
         end
         function __gsoOrbwalker:UOL_OnPostAttack(func)
-                _G.gsoSDK.Utilities:AddAction(function() if _G.SDK and _G.SDK.Orbwalker then _G.SDK.Orbwalker:OnPostAttack(func) end, 2)
+                _G.gsoSDK.Utilities:AddAction(function() if _G.SDK and _G.SDK.Orbwalker then _G.SDK.Orbwalker:OnPostAttack(func) end end, 2)
                 gsoOnPostAttackC[#gsoOnPostAttackC+1] = func
                 GOS:OnAttackComplete(func)
         end
         function __gsoOrbwalker:UOL_OnAttack(func)
-                _G.gsoSDK.Utilities:AddAction(function() if _G.SDK and _G.SDK.Orbwalker then _G.SDK.Orbwalker:OnAttack(func) end, 2)
+                _G.gsoSDK.Utilities:AddAction(function() if _G.SDK and _G.SDK.Orbwalker then _G.SDK.Orbwalker:OnAttack(func) end end, 2)
                 gsoOnAttackC[#gsoOnAttackC+1] = func
                 GOS:OnAttack(func)
         end
         function __gsoOrbwalker:UOL_OnPreMovement(func)
-                _G.gsoSDK.Utilities:AddAction(function() if _G.SDK and _G.SDK.Orbwalker then _G.SDK.Orbwalker:OnPreMovement(func) end, 2)
+                _G.gsoSDK.Utilities:AddAction(function() if _G.SDK and _G.SDK.Orbwalker then _G.SDK.Orbwalker:OnPreMovement(func) end end, 2)
                 gsoOnPreMoveC[#gsoOnPreMoveC+1] = func
         end
         function __gsoOrbwalker:UOL_CanMove()
