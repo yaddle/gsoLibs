@@ -22,6 +22,7 @@ local gsoBaseWindUp = myHero.attackData.windUpTime / myHero.attackData.animation
 local gsoAttackEndTime = myHero.attackData.endTime + 0.1
 local gsoWindUpTime = myHero.attackData.windUpTime
 local gsoAnimTime = myHero.attackData.animationTime
+local gsoUOLoaded = { Icy = false, Gamsteron = false, Gos = false }
 local gsoNoAttacks = {
     ["volleyattack"] = true,
     ["volleyattackwithsound"] = true,
@@ -103,32 +104,32 @@ class "__gsoOrbwalker"
         function __gsoOrbwalker:EnableGamsteronOrb()
                 if not gsoMenu.enabledorb:Value() then gsoMenu.enabledorb:Value(true) end
                 gsoMenu:Hide(false)
-                self.UOL_Loaded.Gamsteron = true
+                gsoUOLoaded.Gamsteron = true
         end
         
         function __gsoOrbwalker:DisableGamsteronOrb()
                 if gsoMenu.enabledorb:Value() then gsoMenu.enabledorb:Value(false) end
                 gsoMenu:Hide(true)
-                self.UOL_Loaded.Gamsteron = false
+                gsoUOLoaded.Gamsteron = false
         end
         
         function __gsoOrbwalker:EnableGosOrb()
                 if not _G.Orbwalker.Enabled:Value() then _G.Orbwalker.Enabled:Value(true) end
                 _G.Orbwalker:Hide(false)
-                self.UOL_Loaded.Gos = true
+                gsoUOLoaded.Gos = true
         end
         
         function __gsoOrbwalker:DisableGosOrb()
                 if _G.Orbwalker.Enabled:Value() then _G.Orbwalker.Enabled:Value(false) end
                 _G.Orbwalker:Hide(true)
-                self.UOL_Loaded.Gos = false
+                gsoUOLoaded.Gos = false
         end
         
         function __gsoOrbwalker:EnableIcyOrb()
                 if _G.SDK and _G.SDK.Orbwalker and _G.SDK.Orbwalker.Loaded then
                         if not _G.SDK.Orbwalker.Menu.Enabled:Value() then _G.SDK.Orbwalker.Menu.Enabled:Value(true) end
                         _G.SDK.Orbwalker.Menu:Hide(false)
-                        self.UOL_Loaded.Icy = true
+                        gsoUOLoaded.Icy = true
                 end
         end
         
@@ -136,7 +137,7 @@ class "__gsoOrbwalker"
                 if _G.SDK and _G.SDK.Orbwalker and _G.SDK.Orbwalker.Loaded then
                         if _G.SDK.Orbwalker.Menu.Enabled:Value() then _G.SDK.Orbwalker.Menu.Enabled:Value(false) end
                         _G.SDK.Orbwalker.Menu:Hide(true)
-                        self.UOL_Loaded.Icy = false
+                        gsoUOLoaded.Icy = false
                 end
         end
         
@@ -192,6 +193,16 @@ class "__gsoOrbwalker"
                         return IsAutoAttacking(myHero)
                 end
         end
+        function __gsoOrbwalker:UOL_LoadedIcy()
+                return gsoUOLoaded.Icy
+        end
+        function __gsoOrbwalker:UOL_LoadedGos()
+                return gsoUOLoaded.Gos
+        end
+        function __gsoOrbwalker:UOL_LoadedGamsteron()
+                return gsoUOLoaded.Gamsteron
+        end
+
         ------------------------------------------------------------------------ UOL END
         
         function __gsoOrbwalker:CreateDrawMenu(menu)
