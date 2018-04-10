@@ -5,6 +5,7 @@ local gsoLastAttackServer = 0
 local gsoLastAttackServerSpell = 0
 local gsoLastMoveLocal = 0
 local gsoServerStart = 0
+local gsoMainMenu = nil
 local gsoMenu = nil
 local gsoDrawMenuMe = nil
 local gsoDrawMenuHe = nil
@@ -81,7 +82,9 @@ class "__gsoOrbwalker"
         end
         
         function __gsoOrbwalker:CreateMenu(menu)
-                gsoMenu = menu:MenuElement({name = "Orbwalker", id = "orb", type = MENU, leftIcon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/orb.png" })
+                gsoMainMenu = menu
+                gsoMenu = gsoMainMenu:MenuElement({name = "Orbwalker", id = "orb", type = MENU, leftIcon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/orb.png" })
+                        gsoMenu:MenuElement({name = "Enabled",  id = "enabledorb", value = true})
                         gsoMenu:MenuElement({name = "Keys", id = "keys", type = MENU})
                                 gsoMenu.keys:MenuElement({name = "Combo Key", id = "combo", key = string.byte(" ")})
                                 gsoMenu.keys:MenuElement({name = "Harass Key", id = "harass", key = string.byte("C")})
@@ -92,6 +95,56 @@ class "__gsoOrbwalker"
                         gsoMenu:MenuElement({name = "Extra LastHit Delay", id = "lhDelay", value = 0, min = -50, max = 50, step = 1 })
                         gsoMenu:MenuElement({name = "Extra Move Delay", id = "humanizer", value = 200, min = 120, max = 300, step = 10 })
                         gsoMenu:MenuElement({name = "Debug Mode",  id = "enabled", value = false})
+        end
+        
+        function __gsoOrbwalker:EnableGamsteronOrb()
+                if not gsoMenu.enabledorb:Value() then gsoMenu.enabledorb:Value(true) end
+                gsoMenu:Hide(false)
+        end
+        
+        function __gsoOrbwalker:DisableGamsteronOrb()
+                if gsoMenu.enabledorb:Value() then gsoMenu.enabledorb:Value(false) end
+                gsoMenu:Hide(true)
+        end
+        
+        function __gsoOrbwalker:EnableGosOrb()
+                if not _G.Orbwalker.Enabled:Value() then _G.Orbwalker.Enabled:Value(true) end
+                _G.Orbwalker:Hide(false)
+        end
+        
+        function __gsoOrbwalker:DisableGosOrb()
+                if _G.Orbwalker.Enabled:Value() then _G.Orbwalker.Enabled:Value(false) end
+                _G.Orbwalker:Hide(true)
+        end
+        
+        function __gsoOrbwalker:EnableIcyOrb()
+                if _G.SDK and _G.SDK.Orbwalker and _G.SDK.Orbwalker.Loaded then
+                        if not _G.SDK.Orbwalker.Menu.Enabled:Value() then _G.SDK.Orbwalker.Menu.Enabled:Value(true) end
+                        _G.SDK.Orbwalker.Menu:Hide(false)
+                end
+        end
+        
+        function __gsoOrbwalker:DisableIcyOrb()
+                if _G.SDK and _G.SDK.Orbwalker and _G.SDK.Orbwalker.Loaded then
+                        if _G.SDK.Orbwalker.Menu.Enabled:Value() then _G.SDK.Orbwalker.Menu.Enabled:Value(false) end
+                        _G.SDK.Orbwalker.Menu:Hide(true)
+                end
+        end
+        
+        function __gsoOrbwalker:UOL()
+                if gsoMainMenu.orbsel:Value() == 1 then
+                        self:DisableIcyOrb()
+                        self:DisableGosOrb()
+                        self:EnableGamsteronOrb()
+                elseif gsoMainMenu.orbsel:Value() == 2 then
+                        self:DisableIcyOrb()
+                        self:EnableGosOrb()
+                        self:DisableGamsteronOrb()
+                elseif gsoMainMenu.orbsel:Value() == 3 then
+                        self:EnableIcyOrb()
+                        self:DisableGosOrb()
+                        self:DisableGamsteronOrb()
+                end
         end
         
         function __gsoOrbwalker:CreateDrawMenu(menu)
@@ -112,6 +165,7 @@ class "__gsoOrbwalker"
         end
         
         function __gsoOrbwalker:Draw()
+                if not gsoMenu.enabledorb:Value() then return end
                 if gsoDrawMenuMe.enabled:Value() and myHero.pos:ToScreen().onScreen then
                         Draw.Circle(myHero.pos, myHero.range + myHero.boundingRadius + 35, gsoDrawMenuMe.width:Value(), gsoDrawMenuMe.color:Value())
                 end
@@ -188,6 +242,8 @@ class "__gsoOrbwalker"
         end
         
         function __gsoOrbwalker:Tick()
+                self:UOL()
+                if not gsoMenu.enabledorb:Value() then return end
                 if gsoIsTeemo then gsoIsBlindedByTeemo = gsoCheckTeemoBlind() end
                 -- SERVER ATTACK START TIME
                 if myHero.attackData.endTime > gsoAttackEndTime then
