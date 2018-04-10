@@ -374,7 +374,7 @@ class "__gsoOrbwalker"
                                 gsoOnPreAttackC[i](args)
                         end
                         if args.Process and args.Target ~= nil then
-                                self:Attack(Target)
+                                self:Attack(args.Target)
                                 gsoPostAttackBool = true
                         end
                 elseif gsoMovementEnabled and self:CanMove() then
