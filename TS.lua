@@ -155,12 +155,14 @@ class "__gsoTS"
                         if result then return result end
                 end
                 local result = nil
-                local min = 10000000
-                for i = 1, #gsoFarmMinions do
-                        local enemyMinion = gsoFarmMinions[i]
-                        if enemyMinion.PredictedHP < min then
-                                min = enemyMinion.PredictedHP
-                                result = enemyMinion.Minion
+                if _G.gsoSDK.Farm:CanLaneClearTime() then
+                        local min = 10000000
+                        for i = 1, #gsoFarmMinions do
+                                local enemyMinion = gsoFarmMinions[i]
+                                if enemyMinion.PredictedHP < min then
+                                        min = enemyMinion.PredictedHP
+                                        result = enemyMinion.Minion
+                                end
                         end
                 end
                 return result

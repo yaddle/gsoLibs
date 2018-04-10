@@ -1,6 +1,7 @@
 
 local gsoActiveAttacks = {}
 local gsoShouldWait = false
+local gsoShouldWaitTime = 0
 local gsoIsLastHitable = false
 
 local function gsoPredPos(speed, pPos, unit)
@@ -57,6 +58,7 @@ class "__gsoFarm"
                         local almostLastHitable = lastHitable and false or self:MinionHpPredFast(enemyMinion, allyMinions, myHero.attackData.animationTime * 3) - damage < 0
                         if almostLastHitable then
                                 gsoShouldWait = true
+                                gsoShouldWaitTime = Game.Timer()
                         end
                         return { LastHitable =  lastHitable, Unkillable = hpPred < 0, AlmostLastHitable = almostLastHitable, PredictedHP = hpPred, Minion = enemyMinion }
                 elseif mode == "accuracy" then
@@ -66,6 +68,7 @@ class "__gsoFarm"
                         local almostLastHitable = lastHitable and false or self:MinionHpPredFast(enemyMinion, allyMinions, myHero.attackData.animationTime * 3) - damage < 0
                         if almostLastHitable then
                                 gsoShouldWait = true
+                                gsoShouldWaitTime = Game.Timer()
                         end
                         return { LastHitable =  lastHitable, Unkillable = hpPred < 0, AlmostLastHitable = almostLastHitable, PredictedHP = hpPred, Minion = enemyMinion }
                 end
@@ -77,6 +80,10 @@ class "__gsoFarm"
         
         function __gsoFarm:CanLaneClear()
                   return not gsoShouldWait
+        end
+        
+        function __gsoFarm:CanLaneClearTime()
+                  return Game.Timer() > gsoShouldWaitTime + 0.5
         end
         
         function __gsoFarm:MinionHpPredFast(unit, allyMinions, time)
