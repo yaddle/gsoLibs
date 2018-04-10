@@ -189,10 +189,12 @@ class "__gsoOrbwalker"
         function __gsoOrbwalker:UOL_OnPostAttack(func)
                 _G.gsoSDK.Utilities:AddAction(function() if _G.SDK and _G.SDK.Orbwalker then _G.SDK.Orbwalker:OnPostAttack(func) end, 2)
                 gsoOnPostAttackC[#gsoOnPostAttackC+1] = func
+                GOS:OnAttackComplete(func)
         end
         function __gsoOrbwalker:UOL_OnAttack(func)
                 _G.gsoSDK.Utilities:AddAction(function() if _G.SDK and _G.SDK.Orbwalker then _G.SDK.Orbwalker:OnAttack(func) end, 2)
                 gsoOnAttackC[#gsoOnAttackC+1] = func
+                GOS:OnAttack(func)
         end
         function __gsoOrbwalker:UOL_OnPreMovement(func)
                 _G.gsoSDK.Utilities:AddAction(function() if _G.SDK and _G.SDK.Orbwalker then _G.SDK.Orbwalker:OnPreMovement(func) end, 2)
