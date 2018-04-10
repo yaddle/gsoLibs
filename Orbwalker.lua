@@ -100,6 +100,7 @@ class "__gsoOrbwalker"
                                 gsoMenu.keys:MenuElement({name = "Harass Key", id = "harass", key = string.byte("C")})
                                 gsoMenu.keys:MenuElement({name = "LastHit Key", id = "lasthit", key = string.byte("X")})
                                 gsoMenu.keys:MenuElement({name = "LaneClear Key", id = "laneclear", key = string.byte("V")})
+                                gsoMenu.keys:MenuElement({name = "Flee Key", id = "flee", key = string.byte("A")})
                         gsoMenu:MenuElement({name = "Extra WindUp Delay [ less = better KITE ]", id = "windupdelay", value = 20, min = 0, max = 150, step = 10 })
                         gsoMenu:MenuElement({name = "Extra Anim Delay [ less = better DPS ]", id = "animdelay", value = 80, min = 0, max = 150, step = 10 })
                         gsoMenu:MenuElement({name = "Extra LastHit Delay", id = "lhDelay", value = 0, min = -50, max = 50, step = 1 })
@@ -225,6 +226,41 @@ class "__gsoOrbwalker"
                         return GOS:IsAttacking()
                 elseif gsoMainMenu.orbsel:Value() == 3 then
                         return _G.SDK.Orbwalker:IsAutoAttacking(myHero)
+                end
+        end
+        function __gsoOrbwalker:UOL_GetMode()
+                if gsoMainMenu.orbsel:Value() == 1 then
+                        if gsoMenu.keys.combo:Value() then
+                                return "Combo"
+                        elseif gsoMenu.keys.harass:Value() then
+                                return "Harass"
+                        elseif gsoMenu.keys.lasthit:Value() then
+                                return "Lasthit"
+                        elseif gsoMenu.keys.laneclear:Value() then
+                                return "Clear"
+                        elseif gsoMenu.keys.flee:Value() then
+                                return "Flee"
+                        else
+                                return ""
+                        end
+                elseif gsoMainMenu.orbsel:Value() == 2 then
+                        return GOS:GetMode()
+                elseif gsoMainMenu.orbsel:Value() == 3 then
+                        if _G.SDK.Orbwalker.Modes[_G.SDK.ORBWALKER_MODE_COMBO] then
+                                return "Combo"
+                        elseif _G.SDK.Orbwalker.Modes[_G.SDK.ORBWALKER_MODE_HARASS] then
+                                return "Harass"
+                        elseif _G.SDK.Orbwalker.Modes[_G.SDK.ORBWALKER_MODE_LANECLEAR] then
+                                return "Clear"
+                        elseif _G.SDK.Orbwalker.Modes[_G.SDK.ORBWALKER_MODE_LASTHIT] then
+                                return "Lasthit"
+                        elseif _G.SDK.Orbwalker.Modes[_G.SDK.ORBWALKER_MODE_FLEE] then
+                                return "Flee"
+                        elseif _G.SDK.Orbwalker.Modes[_G.SDK.ORBWALKER_MODE_JUNGLECLEAR] then
+                                return "Jungleclear"
+                        else
+                                return ""
+                        end
                 end
         end
         function __gsoOrbwalker:UOL_LoadedIc()
@@ -446,6 +482,10 @@ class "__gsoOrbwalker"
                                 self:AttackMove(_G.gsoSDK.TS:GetLaneClearTarget())
                         else
                                 self:AttackMove()
+                        end
+                elseif gsoMenu.keys.flee:Value() then
+                        if gsoMovementEnabled and Game.Timer() > gsoLastMoveLocal and self:CanMove() then
+                                self:Move()
                         end
                 elseif Game.Timer() < gsoLastMouseDown + 1 then
                         Control.mouse_event(MOUSEEVENTF_RIGHTDOWN)
