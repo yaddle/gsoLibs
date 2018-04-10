@@ -24,6 +24,8 @@ local gsoWindUpTime = myHero.attackData.windUpTime
 local gsoAnimTime = myHero.attackData.animationTime
 local gsoUOLoaded = { Icy = false, Gamsteron = false, Gos = false }
 local gsoOnPreAttackC = {}
+local gsoOnPostAttackC = {}
+local gsoPostAttackBool = false
 local gsoNoAttacks = {
     ["volleyattack"] = true,
     ["volleyattackwithsound"] = true,
@@ -170,6 +172,10 @@ class "__gsoOrbwalker"
                 _G.gsoSDK.Utilities:AddAction(function() if _G.SDK and _G.SDK.Orbwalker then _G.SDK.Orbwalker:OnPreAttack(func) end, 2)
                 gsoOnPreAttackC[#gsoOnPreAttackC+1] = func
         end
+        function __gsoOrbwalker:UOL_OnPostAttack(func)
+                _G.gsoSDK.Utilities:AddAction(function() if _G.SDK and _G.SDK.Orbwalker then _G.SDK.Orbwalker:OnPostAttack(func) end, 2)
+                gsoOnPostAttackC[#gsoOnPostAttackC+1] = func
+        end
         function __gsoOrbwalker:UOL_CanMove()
                 if gsoMainMenu.orbsel:Value() == 1 then
                         return self:CanMove()
@@ -300,8 +306,15 @@ class "__gsoOrbwalker"
                         end
                         if args.Process and args.Target ~= nil then
                                 self:Attack(Target)
+                                gsoPostAttackBool = true
                         end
                 elseif Game.Timer() > gsoLastMoveLocal and self:CanMove() then
+                        if gsoPostAttackBool then
+                                for i = 1, #gsoOnPostAttackC do
+                                        gsoOnPostAttackC[i]()
+                                end
+                                gsoPostAttackBool = false
+                        end
                         self:Move()
                 end
         end
