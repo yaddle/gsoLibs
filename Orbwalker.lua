@@ -358,6 +358,7 @@ class "__gsoOrbwalker"
         
         function __gsoOrbwalker:CanMove()
                 local latency = math.min(_G.gsoSDK.Utilities:GetMinLatency(), Game.Latency() * 0.001) * 0.75
+                latency = math.min(latency, 0.09)
                 local windUpDelay = gsoMenu.windupdelay:Value() * 0.001
                 if Game.Timer() < gsoLastAttackLocal + gsoWindUpTime + gsoLastAttackDiff - latency - 0.025 + windUpDelay then
                         return false
