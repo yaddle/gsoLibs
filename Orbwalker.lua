@@ -25,6 +25,7 @@ local gsoAnimTime = myHero.attackData.animationTime
 local gsoUOLoaded = { Icy = false, Gamsteron = false, Gos = false }
 local gsoOnPreAttackC = {}
 local gsoOnPostAttackC = {}
+local gsoOnAttackC = {}
 local gsoPostAttackBool = false
 local gsoNoAttacks = {
     ["volleyattack"] = true,
@@ -176,6 +177,10 @@ class "__gsoOrbwalker"
                 _G.gsoSDK.Utilities:AddAction(function() if _G.SDK and _G.SDK.Orbwalker then _G.SDK.Orbwalker:OnPostAttack(func) end, 2)
                 gsoOnPostAttackC[#gsoOnPostAttackC+1] = func
         end
+        function __gsoOrbwalker:UOL_OnAttack(func)
+                _G.gsoSDK.Utilities:AddAction(function() if _G.SDK and _G.SDK.Orbwalker then _G.SDK.Orbwalker:OnAttack(func) end, 2)
+                gsoOnAttackC[#gsoOnAttackC+1] = func
+        end
         function __gsoOrbwalker:UOL_CanMove()
                 if gsoMainMenu.orbsel:Value() == 1 then
                         return self:CanMove()
@@ -325,6 +330,9 @@ class "__gsoOrbwalker"
                 if gsoIsTeemo then gsoIsBlindedByTeemo = gsoCheckTeemoBlind() end
                 -- SERVER ATTACK START TIME
                 if myHero.attackData.endTime > gsoAttackEndTime then
+                        for i = 1, #gsoOnAttackC do
+                                gsoOnAttackC[i]()
+                        end
                         local serverStart = myHero.attackData.endTime - myHero.attackData.animationTime
                         gsoLastAttackDiff = serverStart - gsoLastAttackLocal
                         gsoLastAttackServer = Game.Timer()
