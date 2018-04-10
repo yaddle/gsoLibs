@@ -19,7 +19,7 @@ end
 local function gsoLatencies()
         local lat1 = 0
         local lat2 = 50
-        gsoLAT[#gsoLAT+1] = { endTime = Game.Timer() + 2.5, Latency = Game.Latency() * 0.001 }
+        gsoLAT[#gsoLAT+1] = { endTime = Game.Timer() + 1.5, Latency = Game.Latency() * 0.001 }
         local cacheLatencies = {}
         for i = 1, #gsoLAT do
                 local t = gsoLAT[i]

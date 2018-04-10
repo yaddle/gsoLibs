@@ -36,6 +36,12 @@ local function gsoGetAttackSpeed()
         return myHero.attackSpeed
 end
 
+local function gsoGetAvgLatency()
+        local currentLatency = Game.Latency() * 0.001
+        local latency = _G.gsoSDK.Utilities:GetMinLatency() + _G.gsoSDK.Utilities:GetMaxLatency() + currentLatency
+        return latency / 3
+end
+
 local function gsoSetAttackTimers()
         gsoBaseAASpeed = 1 / myHero.attackData.animationTime / myHero.attackSpeed
         gsoBaseWindUp = myHero.attackData.windUpTime / myHero.attackData.animationTime
@@ -91,8 +97,8 @@ class "__gsoOrbwalker"
                                 gsoMenu.keys:MenuElement({name = "Harass Key", id = "harass", key = string.byte("C")})
                                 gsoMenu.keys:MenuElement({name = "LastHit Key", id = "lasthit", key = string.byte("X")})
                                 gsoMenu.keys:MenuElement({name = "LaneClear Key", id = "laneclear", key = string.byte("V")})
-                        gsoMenu:MenuElement({name = "Extra WindUp Delay", id = "windupdelay", value = 90, min = 0, max = 200, step = 10 })
-                        gsoMenu:MenuElement({name = "Extra Anim Delay", id = "animdelay", value = 10, min = 0, max = 15, step = 5 })
+                        gsoMenu:MenuElement({name = "Extra WindUp Delay [ less = better KITE ]", id = "windupdelay", value = 20, min = 0, max = 150, step = 10 })
+                        gsoMenu:MenuElement({name = "Extra Anim Delay [ less = better DPS ]", id = "animdelay", value = 80, min = 0, max = 150, step = 10 })
                         gsoMenu:MenuElement({name = "Extra LastHit Delay", id = "lhDelay", value = 0, min = -50, max = 50, step = 1 })
                         gsoMenu:MenuElement({name = "Extra Move Delay", id = "humanizer", value = 200, min = 120, max = 300, step = 10 })
                         gsoMenu:MenuElement({name = "Debug Mode",  id = "enabled", value = false})
@@ -163,7 +169,7 @@ class "__gsoOrbwalker"
                         return true
                 end
                 local animDelay = gsoMenu.animdelay:Value() * 0.001
-                if Game.Timer() < gsoLastAttackLocal + gsoAnimTime + animDelay then -- + gsoLastAttackDiff  - _G.gsoSDK.Utilities:GetMinLatency()
+                if Game.Timer() < gsoLastAttackLocal + gsoAnimTime + gsoLastAttackDiff + animDelay - 0.15 - gsoGetAvgLatency() then
                         return false
                 end
                 return true
@@ -173,10 +179,12 @@ class "__gsoOrbwalker"
                 if Game.Timer() < gsoLastMoveLocal then
                         return false
                 end
+                local latency = math.min(_G.gsoSDK.Utilities:GetMinLatency(), Game.Latency() * 0.001) * 0.75
                 local windUpDelay = gsoMenu.windupdelay:Value() * 0.001
-                if Game.Timer() < gsoLastAttackLocal + gsoWindUpTime + windUpDelay then -- + gsoLastAttackDiff  - _G.gsoSDK.Utilities:GetMinLatency()
+                if Game.Timer() < gsoLastAttackLocal + gsoWindUpTime + gsoLastAttackDiff - latency - 0.025 + windUpDelay then
                         return false
                 end
+                if gsoLastAttackLocal > gsoLastAttackServer then print("lol") end
                 return true
         end
         
@@ -221,7 +229,7 @@ class "__gsoOrbwalker"
                         end
                 end
                 -- RESET ATTACK
-                if gsoLastAttackLocal > gsoLastAttackServer and Game.Timer() > gsoLastAttackLocal + myHero.attackData.windUpTime + 0.1 + _G.gsoSDK.Utilities:GetMaxLatency() then
+                if gsoLastAttackLocal > gsoLastAttackServer and Game.Timer() > gsoLastAttackLocal + 0.15 + _G.gsoSDK.Utilities:GetMaxLatency() then
                         if gsoMenu.enabled:Value() then
                                 print("reset attack1")
                         end
