@@ -45,18 +45,8 @@ end
 local function gsoSetAttackTimers()
         gsoBaseAASpeed = 1 / myHero.attackData.animationTime / myHero.attackSpeed
         gsoBaseWindUp = myHero.attackData.windUpTime / myHero.attackData.animationTime
-        local hasLethalTempo = false
-        for i = 0, myHero.buffCount do
-                local buff = myHero:GetBuff(i)
-                if buff and buff.count > 0 and buff.name:lower():find("flowofbattleempowered") then
-                        hasLethalTempo = true
-                        break
-                end
-        end
         local aaSpeed = gsoGetAttackSpeed() * gsoBaseAASpeed
-        local numAS = aaSpeed >= 2.5 and 2.5 or aaSpeed
-        numAS = hasLethalTempo and aaSpeed or numAS
-        local animT = 1 / numAS
+        local animT = 1 / aaSpeed
         local windUpT = animT * gsoBaseWindUp
         gsoAnimTime = animT > myHero.attackData.animationTime and animT or myHero.attackData.animationTime
         gsoWindUpTime = windUpT > myHero.attackData.windUpTime and windUpT or myHero.attackData.windUpTime
@@ -184,7 +174,7 @@ class "__gsoOrbwalker"
                 if Game.Timer() < gsoLastAttackLocal + gsoWindUpTime + gsoLastAttackDiff - latency - 0.025 + windUpDelay then
                         return false
                 end
-                if gsoLastAttackLocal > gsoLastAttackServer then print("lol") end
+                if gsoLastAttackLocal > gsoLastAttackServer then return false end
                 return true
         end
         
