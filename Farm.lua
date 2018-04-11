@@ -83,7 +83,8 @@ class "__gsoFarm"
         end
         
         function __gsoFarm:CanLaneClearTime()
-                  return Game.Timer() > gsoShouldWaitTime + 0.5
+                  local shouldWait = _G.gsoSDK.TS.mainMenu.ts.shouldwaittime:Value() * 0.001
+                  return Game.Timer() > gsoShouldWaitTime + shouldWait
         end
         
         function __gsoFarm:MinionHpPredFast(unit, allyMinions, time)

@@ -52,6 +52,7 @@ class "__gsoTS"
                         gsoMenu:MenuElement({ id = "selected", name = "Selected Target", type = MENU })
                                 gsoMenu.selected:MenuElement({ id = "enable", name = "Enable", value = true })
                         gsoMenu:MenuElement({name = "LastHit Mode", id = "lasthitmode", value = 1, drop = { "Accuracy", "Fast" } })
+                        gsoMenu:MenuElement({name = "LaneClear Should Wait Time", id = "shouldwaittime", value = 200, min = 0, max = 1000, step = 50, tooltip = "Less Value = Faster LaneClear" })
                         gsoMenu:MenuElement({name = "LaneClear Harass", id = "laneset", value = true })
         end
         
