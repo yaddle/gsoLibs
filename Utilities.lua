@@ -1,5 +1,6 @@
 local gsoMinLatency = Game.Latency() * 0.001
 local gsoMaxLatency = Game.Latency() * 0.001
+local gsoMin = Game.Latency() * 0.001
 local gsoLAT = {}
 local gsoDA = {}
 
@@ -19,7 +20,11 @@ end
 local function gsoLatencies()
         local lat1 = 0
         local lat2 = 50
-        gsoLAT[#gsoLAT+1] = { endTime = Game.Timer() + 1.5, Latency = Game.Latency() * 0.001 }
+        local latency = Game.Latency() * 0.001
+        if latency < gsoMin then
+                gsoMin = latency
+        end
+        gsoLAT[#gsoLAT+1] = { endTime = Game.Timer() + 1.5, Latency = latency }
         local cacheLatencies = {}
         for i = 1, #gsoLAT do
                 local t = gsoLAT[i]
@@ -55,4 +60,8 @@ class "__gsoUtilities"
         
         function __gsoUtilities:GetMinLatency()
                 return gsoMinLatency
+        end
+        
+        function __gsoUtilities:GetUserLatency()
+                return gsoMin
         end
