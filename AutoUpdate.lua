@@ -136,7 +136,7 @@ local function gsoUpdate(localScript, webScript, http)
         local success, text, code, headers, status = gsoDownloadFile(webScript, http)
         if success then
                 gsoSaveToFile(localScript, text)
-                print(tostring(fileName .. ' - Success ! Please Reload with 2x F6.'))
+                print(tostring(fileName .. ' - Success !'))
                 return true
         end
         print(tostring(fileName .. ' - Error while Downloading. Please try again - 2xF6.'))
