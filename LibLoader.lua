@@ -12,6 +12,30 @@ _G.gsoSDK = {}
 class "__gsoLibLoader"
         
         function __gsoLibLoader:__init(menu)
+                --[[ AUTO UPDATE
+                self.FilesToDownload = {
+                        {
+                                LocalVersion = 0.01,
+                                LocalScript = SCRIPT_PATH .. "circle1.lua",
+                                OnlineScript = "https://raw.githubusercontent.com/gamsteron/GoSExt2/master/test/testUpdate.lua",
+                                OnlineVersion = "https://raw.githubusercontent.com/gamsteron/GoSExt2/master/test/testUpdate.version",
+                        },
+                        {
+                                LocalVersion = 0.01,
+                                LocalScript = SCRIPT_PATH .. "circle2.lua",
+                                OnlineScript = "https://raw.githubusercontent.com/gamsteron/GoSExt2/master/test/testUpdate2.lua",
+                                OnlineVersion = "https://raw.githubusercontent.com/gamsteron/GoSExt2/master/test/testUpdate.version",
+                        }
+                }
+                require "gsoLibs\\AutoUpdate"
+                _G.gsoSDK.AutoUpdate = __gsoAutoUpdate()
+                for i = 1, #self.FilesToDownload do
+                        local f = self.FilesToDownload[i]
+                        if  _G.gsoSDK.AutoUpdate:CanUpdate(f.LocalVersion, f.OnlineVersion) then
+                                _G.gsoSDK.AutoUpdate:Update(f.LocalScript, f.OnlineScript)
+                        end
+                end
+                --]]
                 -- LOAD LIBS
                 require "gsoLibs\\Utilities"
                 _G.gsoSDK.Utilities = __gsoUtilities()
