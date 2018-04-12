@@ -75,9 +75,8 @@ local function gsoDownloadFile(url, http)
                 if ContentStart and ContentEnd then
                         return true, Base64Decode(body:sub(ContentStart + 1,ContentEnd-1)), code, headers, status
                 end
-        else
-                return false, body, code, headers, status
         end
+        return false, body, code, headers, status
 end
 
 local function gsoCanUpdate(localVersion, webVersion, http)
