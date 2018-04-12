@@ -109,7 +109,7 @@ local function gsoCanUpdate(localVersion, webVersion, http)
                         print(''); print(tostring(fileName .. ' - New Version found (' .. onlineVersion .. '). Please wait until its downloaded ...'))
                         return true
                 else
-                        print(tostring(fileName .. ' - No Updates Found. You have latest version (' .. localVersion .. ').'))
+                        --print(tostring(fileName .. ' - No Updates Found. You have latest version (' .. localVersion .. ').'))
                         return false
                 end
         end

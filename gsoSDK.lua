@@ -18,5 +18,17 @@ class "__gsoSDK"
                         _G.gsoSDK.AutoUpdate:Update(SCRIPT_PATH .. "gsoLibs\\LibLoader.lua", "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/LibLoader.lua")
                 end
                 require "gsoLibs\\LibLoader"
-                __gsoLibLoader(menu)
+                self.Loader = __gsoLibLoader(menu)
+        end
+        
+        function __gsoSDK:Tick()
+                self.Loader:Tick()
+        end
+        
+        function __gsoSDK:WndMsg(msg, wParam)
+                self.Loader:WndMsg(msg, wParam)
+        end
+        
+        function __gsoSDK:Draw()
+                self.Loader:Draw()
         end
