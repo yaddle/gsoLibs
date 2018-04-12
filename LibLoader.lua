@@ -5,49 +5,49 @@ class "__gsoLibLoader"
                 self.FilesToDownload = {
                         {
                                 LocalVersion = 0.01,
-                                LocalScript = SCRIPT_PATH .. "AutoUpdate.lua",
+                                LocalScript = COMMON_PATH .. "gsoLibs\\AutoUpdate.lua",
                                 OnlineScript = "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/AutoUpdate.lua",
                                 OnlineVersion = "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/version/AutoUpdate.version"
                         },
                         {
                                 LocalVersion = 0.01,
-                                LocalScript = SCRIPT_PATH .. "Cursor.lua",
+                                LocalScript = COMMON_PATH .. "gsoLibs\\Cursor.lua",
                                 OnlineScript = "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/Cursor.lua",
                                 OnlineVersion = "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/version/Cursor.version"
                         },
                         {
                                 LocalVersion = 0.01,
-                                LocalScript = SCRIPT_PATH .. "Farm.lua",
+                                LocalScript = COMMON_PATH .. "gsoLibs\\Farm.lua",
                                 OnlineScript = "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/Farm.lua",
                                 OnlineVersion = "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/version/Farm.version"
                         },
                         {
                                 LocalVersion = 0.01,
-                                LocalScript = SCRIPT_PATH .. "ObjectManager.lua",
+                                LocalScript = COMMON_PATH .. "gsoLibs\\ObjectManager.lua",
                                 OnlineScript = "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/ObjectManager.lua",
                                 OnlineVersion = "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/version/ObjectManager.version"
                         },
                         {
                                 LocalVersion = 0.01,
-                                LocalScript = SCRIPT_PATH .. "Orbwalker.lua",
+                                LocalScript = COMMON_PATH .. "gsoLibs\\Orbwalker.lua",
                                 OnlineScript = "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/Orbwalker.lua",
                                 OnlineVersion = "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/version/Orbwalker.version"
                         },
                         {
                                 LocalVersion = 0.01,
-                                LocalScript = SCRIPT_PATH .. "TS.lua",
+                                LocalScript = COMMON_PATH .. "gsoLibs\\TS.lua",
                                 OnlineScript = "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/TS.lua",
                                 OnlineVersion = "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/version/TS.version"
                         },
                         {
                                 LocalVersion = 0.01,
-                                LocalScript = SCRIPT_PATH .. "TS.lua",
+                                LocalScript = COMMON_PATH .. "gsoLibs\\TS.lua",
                                 OnlineScript = "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/TS.lua",
                                 OnlineVersion = "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/version/TS.version"
                         },
                         {
                                 LocalVersion = 0.01,
-                                LocalScript = SCRIPT_PATH .. "Utilities.lua",
+                                LocalScript = COMMON_PATH .. "gsoLibs\\Utilities.lua",
                                 OnlineScript = "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/Utilities.lua",
                                 OnlineVersion = "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/version/Utilities.version"
                         },
