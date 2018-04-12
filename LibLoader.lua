@@ -54,7 +54,7 @@ class "__gsoLibLoader"
                 }
                 for i = 1, #self.FilesToDownload do
                         local f = self.FilesToDownload[i]
-                        if  _G.gsoSDK.AutoUpdate:CanUpdate(f.LocalVersion, f.OnlineVersion) then
+                        if _G.gsoSDK.AutoUpdate:CanUpdate(f.LocalVersion, f.OnlineVersion) then
                                 _G.gsoSDK.AutoUpdate:Update(f.LocalScript, f.OnlineScript)
                         end
                 end
