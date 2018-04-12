@@ -51,6 +51,24 @@ class "__gsoLibLoader"
                                 OnlineScript = "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/Utilities.lua",
                                 OnlineVersion = "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/version/Utilities.version"
                         },
+                        {
+                                LocalVersion = 0.01,
+                                LocalScript = COMMON_PATH .. "gsoLibs\\Activator.lua",
+                                OnlineScript = "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/Activator.lua",
+                                OnlineVersion = "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/version/Activator.version"
+                        },
+                        {
+                                LocalVersion = 0.01,
+                                LocalScript = COMMON_PATH .. "gsoLibs\\Prediction.lua",
+                                OnlineScript = "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/Prediction.lua",
+                                OnlineVersion = "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/version/Prediction.version"
+                        },
+                        {
+                                LocalVersion = 0.01,
+                                LocalScript = COMMON_PATH .. "gsoLibs\\Spell.lua",
+                                OnlineScript = "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/Spell.lua",
+                                OnlineVersion = "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/version/Spell.version"
+                        }
                 }
                 local boolean = false
                 for i = 1, #self.FilesToDownload do
