@@ -61,7 +61,7 @@ class "__gsoLibLoader"
                         end
                 end
                 if not boolean then
-                        print("gsoLibs - You have latest version. Update is not needed.")
+                        print("gsoLibs - No Updates Found.")
                 end
                 -- LOAD LIBS
                 require "gsoLibs\\Utilities"
