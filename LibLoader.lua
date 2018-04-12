@@ -52,11 +52,16 @@ class "__gsoLibLoader"
                                 OnlineVersion = "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/version/Utilities.version"
                         },
                 }
+                local boolean = false
                 for i = 1, #self.FilesToDownload do
                         local f = self.FilesToDownload[i]
                         if _G.gsoSDK.AutoUpdate:CanUpdate(f.LocalVersion, f.OnlineVersion) then
+                                boolean = true
                                 _G.gsoSDK.AutoUpdate:Update(f.LocalScript, f.OnlineScript)
                         end
+                end
+                if not boolean then
+                        print("gsoLibs - You have latest version. Update is not needed.")
                 end
                 -- LOAD LIBS
                 require "gsoLibs\\Utilities"

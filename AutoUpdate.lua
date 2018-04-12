@@ -67,7 +67,7 @@ local function gsoGetName(s, sc)
 end
 
 local function gsoDownloadFile(url, http)
-        local socketHttp = require "lua.socket.http"
+        local socketHttp = require("gsoLibs.lua.socket.http")
         local body, code, headers, status = socketHttp.request(tostring('http://gamingonsteroids.com/GOS/TCPUpdater/GetScript' .. (http and 6 or 5) .. '.php?script=' .. Base64Encode(url) .. '&rand=' .. random(99999999)))
         if body then
                 local _CS, ContentStart = body:find('<scr' .. 'ipt>')
@@ -122,7 +122,7 @@ local function gsoSaveToFile(path, str)
         f:close()
 end
 
-local function gsoUpdate(localScript, webScript, http)
+local function gsoUpdate(localScript, webScript, needReload, http)
         -- file name
         local fileName = gsoGetName(webScript, string.byte("/"))
         -- remove http://, https://
@@ -135,7 +135,7 @@ local function gsoUpdate(localScript, webScript, http)
         local success, text, code, headers, status = gsoDownloadFile(webScript, http)
         if success then
                 gsoSaveToFile(localScript, text)
-                print(tostring(fileName .. ' - Success !'))
+                print(tostring(fileName .. ' - Successfully Downloaded !' .. (needReload and " Please Reload with 2x F6." or "")))
                 return true
         end
         print(tostring(fileName .. ' - Error while Downloading. Please try again - 2xF6.'))
@@ -150,8 +150,8 @@ class '__gsoAutoUpdate'
                 return gsoCanUpdate(localVersion, webVersion, http)
         end
         
-        function __gsoAutoUpdate:Update(localScript, webScript, http)
-                return gsoUpdate(localScript, webScript, http)
+        function __gsoAutoUpdate:Update(localScript, webScript, needReload, http)
+                return gsoUpdate(localScript, webScript, needReload, http)
         end
 
 
