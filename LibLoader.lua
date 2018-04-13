@@ -41,12 +41,6 @@ class "__gsoLibLoader"
                         },
                         {
                                 LocalVersion = 0.01,
-                                LocalScript = COMMON_PATH .. "gsoLibs\\TS.lua",
-                                OnlineScript = "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/TS.lua",
-                                OnlineVersion = "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/version/TS.version"
-                        },
-                        {
-                                LocalVersion = 0.01,
                                 LocalScript = COMMON_PATH .. "gsoLibs\\Utilities.lua",
                                 OnlineScript = "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/Utilities.lua",
                                 OnlineVersion = "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/version/Utilities.version"
