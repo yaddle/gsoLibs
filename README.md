@@ -1,6 +1,3 @@
-# gsoLibs
-Gamsteron's Laboratory
-
 Installation: https://github.com/gamsteron/gsoLibs/releases/tag/Installer
 You need wait for: "download complete ..." status.
 
