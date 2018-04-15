@@ -4,7 +4,7 @@ class "__gsoLibLoader"
                 -- AUTO UPDATE
                 self.FilesToDownload = {
                         {
-                                LocalVersion = 0.01,
+                                LocalVersion = 0.02,
                                 LocalScript = COMMON_PATH .. "gsoLibs\\AutoUpdate.lua",
                                 OnlineScript = "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/AutoUpdate.lua",
                                 OnlineVersion = "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/version/AutoUpdate.version"

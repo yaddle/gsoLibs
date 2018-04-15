@@ -97,20 +97,27 @@ local function gsoCanUpdate(localVersion, webVersion, http)
                 return false
         end
         -- download version file
-        local success, text, code, headers, status = gsoDownloadFile(webVersion, http)
-        if success then
-                local onlineVersion = tonumber(text)
-                if type(onlineVersion) ~= "number" then
-                        print(tostring(fileName .. ' - Online Version is not a Number !'))
-                        return false
+        local whileCount = 0
+        while true do
+                if whileCount == 7 then
+                        break
                 end
-                if onlineVersion > localVersion then
-                        print(''); print(tostring(fileName .. ' - New Version found (' .. onlineVersion .. ').'))
-                        return true
-                else
-                        --print(tostring(fileName .. ' - No Updates Found. You have latest version (' .. localVersion .. ').'))
-                        return false
+                local success, text, code, headers, status = gsoDownloadFile(webVersion, http)
+                if success then
+                        local onlineVersion = tonumber(text)
+                        if type(onlineVersion) ~= "number" then
+                                print(tostring(fileName .. ' - Online Version is not a Number !'))
+                                return false
+                        end
+                        if onlineVersion > localVersion then
+                                print(''); print(tostring(fileName .. ' - New Version found (' .. onlineVersion .. ').'))
+                                return true
+                        else
+                                --print(tostring(fileName .. ' - No Updates Found. You have latest version (' .. localVersion .. ').'))
+                                return false
+                        end
                 end
+                whileCount = whileCount + 1
         end
         print(tostring(fileName .. ' - Error while Downloading. Please try again - 2xF6.'))
         return false
@@ -132,11 +139,18 @@ local function gsoUpdate(localScript, webScript, needReload, http)
                 webScript = webScript:sub(9)
         end
         -- download file
-        local success, text, code, headers, status = gsoDownloadFile(webScript, http)
-        if success then
-                gsoSaveToFile(localScript, text)
-                print(tostring(fileName .. ' - Successfully Downloaded !' .. (needReload and " Please Reload with 2x F6." or "")))
-                return true
+        local whileCount = 0
+        while true do
+                if whileCount == 7 then
+                        break
+                end
+                local success, text, code, headers, status = gsoDownloadFile(webScript, http)
+                if success then
+                        gsoSaveToFile(localScript, text)
+                        print(tostring(fileName .. ' - Successfully Downloaded !' .. (needReload and " Please Reload with 2x F6." or "")))
+                        return true
+                end
+                whileCount = whileCount + 1
         end
         print(tostring(fileName .. ' - Error while Downloading. Please try again - 2xF6.'))
         return false
