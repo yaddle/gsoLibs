@@ -198,7 +198,11 @@ class "__gsoOrbwalker"
         end
         function __gsoOrbwalker:UOL_SetAttack(boolean)
                 if _G.SDK and _G.SDK.Orbwalker then _G.SDK.Orbwalker:SetAttack(boolean) end
+<<<<<<< HEAD
+                gsoAttackEnabled = boolean
+=======
                 gsoAttackEnabled = boolean                
+>>>>>>> 95b466f4f06e18765b7e49d8bada139b113d6175
                 GOS.BlockAttack = not boolean
         end
         function __gsoOrbwalker:UOL_OnPreAttack(func)
