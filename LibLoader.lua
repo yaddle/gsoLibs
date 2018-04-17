@@ -28,7 +28,7 @@ class "__gsoLibLoader"
                                 OnlineVersion = "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/version/ObjectManager.version"
                         },
                         {
-                                LocalVersion = 0.01,
+                                LocalVersion = 0.02,
                                 LocalScript = COMMON_PATH .. "gsoLibs\\Orbwalker.lua",
                                 OnlineScript = "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/Orbwalker.lua",
                                 OnlineVersion = "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/version/Orbwalker.version"
