@@ -11,7 +11,7 @@ local function IsImmobileTarget(unit)
         return false
 end
 local _OnVision = {}
-local visionTick = GetTickCount()
+local noddyTick = GetTickCount()
 local function OnVision(unit)
         if _OnVision[unit.networkID] == nil then _OnVision[unit.networkID] = {state = unit.visible , tick = GetTickCount(), pos = unit.pos} end
         if _OnVision[unit.networkID].state == true and not unit.visible then _OnVision[unit.networkID].state = false _OnVision[unit.networkID].tick = GetTickCount() end
@@ -34,14 +34,13 @@ local function OnWaypoint(unit)
         return _OnWaypoint[unit.networkID]
 end
 Callback.Add("Tick", function()
-        if GetTickCount() - visionTick > 100 then
-                for i,v in pairs(GetEnemyHeroes()) do
-                        OnVision(v)
+        if GetTickCount() - noddyTick > 100 then
+                local enemies = _G.gsoSDK.ObjectManager:GetEnemyHeroes(math.huge, false, "spell")
+                for i = 1, #enemies do
+                        local enemy = enemies[i]
+                        OnVision(enemy)
+                        OnWaypoint(enemy)
                 end
-        end
-        local enemies = _G.gsoSDK.ObjectManager:GetEnemyHeroes(math.huge, false, "spell")
-        for i = 1, #enemies do
-                OnWaypoint(enemies[i])
         end
 end)
 local function GetPred(unit,speed,delay)
@@ -70,9 +69,31 @@ end
 
 class "__gsoPrediction"
         
-        function __gsoPrediction:UPL_GetPred(unit, speed, delay)
-                --[[if menu == 1 then (noddy)
-                        return GetPred(unit,speed,delay)
-                elseif
-                end--]]
+        function __gsoPrediction:__init(menu)
+                require "TPred"
+                require "HPred"
+                self.menu = menu
+        end
+        
+        function __gsoPrediction:UPL_GetPrediction(unit, delay, radius, range, speed, from, collision, spelltype)
+                from = from.x and from or from.pos
+                if self.menu.predsel:Value() == 1 then
+                        local castpos = GetPred(unit, speed, delay)
+                        if not castpos then return -1, nil end
+                        if Vector(castpos):DistanceTo(Vector(from)) > range - 35 then return -1, nil end
+                        if collision and unit:GetCollision(radius,speed, delay) > 0 then return -1, nil end
+                        return 10, castpos
+                elseif self.menu.predsel:Value() == 2 then
+                        local CastPosition, HitChance, Position = TPred:GetBestCastPosition(unit, delay, radius, range, speed, from, false, spelltype)
+                        if not CastPosition or HitChance < 1 then return -1, nil end
+                        if Vector(CastPosition):DistanceTo(Vector(from)) > range - 35 then return -1, nil end
+                        if collision and unit:GetCollision(radius,speed, delay) > 0 then return -1, nil end
+                        return HitChance, CastPosition
+                elseif self.menu.predsel:Value() == 3 then
+                        local HitChance, CastPosition = GetHitchance(from, unit, range, delay, speed, radius, collision)
+                        if not CastPosition or HitChance < 1 then return -1, nil end
+                        if Vector(CastPosition):DistanceTo(Vector(from)) > range - 35 then return -1, nil end
+                        if collision and unit:GetCollision(radius,speed, delay) > 0 then return -1, nil end
+                        return HitChance, CastPosition
+                end
         end

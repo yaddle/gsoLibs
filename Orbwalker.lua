@@ -83,6 +83,10 @@ class "__gsoOrbwalker"
                 return gsoLastMovePos
         end
         
+        function __gsoOrbwalker:ResetMove()
+                gsoLastMoveLocal = 0
+        end
+        
         function __gsoOrbwalker:ResetAttack()
                 gsoResetAttack = true
         end

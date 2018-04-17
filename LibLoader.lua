@@ -2,6 +2,12 @@ class "__gsoLibLoader"
         
         function __gsoLibLoader:__init(menu)
                 -- AUTO UPDATE
+                -- Sikaka Prediction
+                _G.gsoSDK.AutoUpdate:Update(COMMON_PATH .. "HPred.lua", "https://raw.githubusercontent.com/Sikaka/GOSExternal/master/HPred.lua")
+                -- TRUS Prediction
+                _G.gsoSDK.AutoUpdate:Update(COMMON_PATH .. "TPred.lua", "https://raw.githubusercontent.com/Vasilyi/gamingonsteroids/master/Common/TPred.lua")
+                -- evitaerCi Orbwalker
+                _G.gsoSDK.AutoUpdate:Update(SCRIPT_PATH .. "Orbwalker.lua", "https://raw.githubusercontent.com/jachicao/GoS/master/src/Orbwalker.lua")
                 self.FilesToDownload = {
                         {
                                 LocalVersion = 0.02,
@@ -28,7 +34,7 @@ class "__gsoLibLoader"
                                 OnlineVersion = "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/version/ObjectManager.version"
                         },
                         {
-                                LocalVersion = 0.02,
+                                LocalVersion = 0.03,
                                 LocalScript = COMMON_PATH .. "gsoLibs\\Orbwalker.lua",
                                 OnlineScript = "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/Orbwalker.lua",
                                 OnlineVersion = "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/version/Orbwalker.version"
@@ -52,13 +58,13 @@ class "__gsoLibLoader"
                                 OnlineVersion = "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/version/Activator.version"
                         },
                         {
-                                LocalVersion = 0.01,
+                                LocalVersion = 0.02,
                                 LocalScript = COMMON_PATH .. "gsoLibs\\Prediction.lua",
                                 OnlineScript = "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/Prediction.lua",
                                 OnlineVersion = "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/version/Prediction.version"
                         },
                         {
-                                LocalVersion = 0.01,
+                                LocalVersion = 0.02,
                                 LocalScript = COMMON_PATH .. "gsoLibs\\Spell.lua",
                                 OnlineScript = "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/Spell.lua",
                                 OnlineVersion = "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/version/Spell.version"
@@ -77,7 +83,14 @@ class "__gsoLibLoader"
                 if not boolean then
                         print("gsoLibs - No Updates Found.")
                 end
+                self.selmenu = MenuElement({name = "Orbwalker & Prediction & TS", id = "gsoorbsel", type = MENU, leftIcon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/seliconjs7sdq.png" })
+                self.selmenu:MenuElement({ id = "orbsel", name = "Orbwalker", value = 1, drop = { "Gamsteron", "GOS", "IC" } })
+                self.selmenu:MenuElement({ id = "predsel", name = "Prediction", value = 1, drop = { "Noddy", "Trus", "Sikaka" } })
                 -- LOAD LIBS
+                require "gsoLibs\\Spell"
+                _G.gsoSDK.Spell = __gsoSpell()
+                require "gsoLibs\\Prediction"
+                _G.gsoSDK.Prediction = __gsoPrediction(self.selmenu)
                 require "gsoLibs\\Utilities"
                 _G.gsoSDK.Utilities = __gsoUtilities()
                 require "gsoLibs\\Cursor"
@@ -91,11 +104,6 @@ class "__gsoLibLoader"
                 require "gsoLibs\\Orbwalker"
                 _G.gsoSDK.Orbwalker = __gsoOrbwalker()
                 -----------------------------------------------------------
-                -- MENU
-                self.selmenu = MenuElement({name = "Orbwalker & Prediction & TS", id = "gsoorbsel", type = MENU, leftIcon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/seliconjs7sdq.png" })
-                self.selmenu:MenuElement({ id = "orbsel", name = "Orbwalker", value = 1, drop = { "Gamsteron", "GOS", "IC" } })
-                self.selmenu:MenuElement({ id = "tssel", name = "Target Selector", value = 1, drop = { "Gamsteron", "GOS", "IC" } })
-                self.selmenu:MenuElement({ id = "predsel", name = "Prediction", value = 1, drop = { "Noddy", "Trus", "Sikaka", "Toshibiotro" } })
                 _G.gsoSDK.TS:CreateMenu(menu)
                 _G.gsoSDK.Orbwalker:CreateMenu(menu, self.selmenu)
                 menu:MenuElement({name = "Drawings", id = "gsodraw", leftIcon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/circles.png", type = MENU })
