@@ -194,12 +194,12 @@ class "__gsoOrbwalker"
         function __gsoOrbwalker:UOL_SetMovement(boolean)
                 if _G.SDK and _G.SDK.Orbwalker then _G.SDK.Orbwalker:SetMovement(boolean) end
                 gsoMovementEnabled = boolean
-                GOS:BlockMovement(not boolean)
+                GOS.BlockMovement = not boolean
         end
         function __gsoOrbwalker:UOL_SetAttack(boolean)
                 if _G.SDK and _G.SDK.Orbwalker then _G.SDK.Orbwalker:SetAttack(boolean) end
-                gsoAttackEnabled = boolean
-                GOS:BlockAttack(not boolean)
+                gsoAttackEnabled = boolean                
+                GOS.BlockAttack = not boolean
         end
         function __gsoOrbwalker:UOL_OnPreAttack(func)
                 _G.gsoSDK.Utilities:AddAction(function() if _G.SDK and _G.SDK.Orbwalker then _G.SDK.Orbwalker:OnPreAttack(func) end end, 2)
