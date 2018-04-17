@@ -8,7 +8,7 @@ local function IsImmobileTarget(unit)
                         return true
                 end
         end
-        return false	
+        return false
 end
 local _OnVision = {}
 local visionTick = GetTickCount()
