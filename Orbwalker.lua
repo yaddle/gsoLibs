@@ -63,8 +63,8 @@ local function gsoSetAttackTimers()
 end
 
 local function gsoCheckTeemoBlind()
-        for i = 0, gsoMyHero.buffCount do
-                local buff = gsoMyHero:GetBuff(i)
+        for i = 0, myHero.buffCount do
+                local buff = myHero:GetBuff(i)
                 if buff and buff.count > 0 and buff.name:lower() == "blindingdart" and buff.duration > 0 then
                         return true
                 end
@@ -198,7 +198,11 @@ class "__gsoOrbwalker"
         end
         function __gsoOrbwalker:UOL_SetAttack(boolean)
                 if _G.SDK and _G.SDK.Orbwalker then _G.SDK.Orbwalker:SetAttack(boolean) end
+<<<<<<< HEAD
+                gsoAttackEnabled = boolean
+=======
                 gsoAttackEnabled = boolean                
+>>>>>>> 95b466f4f06e18765b7e49d8bada139b113d6175
                 GOS.BlockAttack = not boolean
         end
         function __gsoOrbwalker:UOL_OnPreAttack(func)
