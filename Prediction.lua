@@ -76,7 +76,6 @@ class "__gsoPrediction"
         function __gsoPrediction:__init(menu)
                 self.menu = menu
                 require "TPred"
-                --require "HPred"
         end
         
         function __gsoPrediction:UPL_GetPrediction(unit, delay, radius, range, speed, from, collision, spelltype)
@@ -93,11 +92,5 @@ class "__gsoPrediction"
                         if Vector(CastPosition):DistanceTo(Vector(from)) > range - 35 then return -1, nil end
                         if collision and unit:GetCollision(radius,speed, delay) > 0 then return -1, nil end
                         return HitChance, CastPosition
-                --[[elseif self.menu.predsel:Value() == 3 then
-                        local HitChance, CastPosition = HPred:GetHitchance(from, unit, range, delay, speed, radius, collision)
-                        if not CastPosition or HitChance < 1 then return -1, nil end
-                        if Vector(CastPosition):DistanceTo(Vector(from)) > range - 35 then return -1, nil end
-                        if collision and unit:GetCollision(radius,speed, delay) > 0 then return -1, nil end
-                        return HitChance, CastPosition--]]
                 end
         end

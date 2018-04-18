@@ -58,7 +58,7 @@ class "__gsoLibLoader"
                                 OnlineVersion = "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/version/Activator.version"
                         },
                         {
-                                LocalVersion = 0.02,
+                                LocalVersion = 0.03,
                                 LocalScript = COMMON_PATH .. "gsoLibs\\Prediction.lua",
                                 OnlineScript = "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/Prediction.lua",
                                 OnlineVersion = "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/version/Prediction.version"
@@ -85,7 +85,7 @@ class "__gsoLibLoader"
                 end
                 self.selmenu = MenuElement({name = "Orbwalker & Prediction & TS", id = "gsoorbsel", type = MENU, leftIcon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/seliconjs7sdq.png" })
                 self.selmenu:MenuElement({ id = "orbsel", name = "Orbwalker", value = 1, drop = { "Gamsteron", "GOS", "IC" } })
-                self.selmenu:MenuElement({ id = "predsel", name = "Prediction", value = 1, drop = { "Noddy", "Trus" } })--, "Sikaka" } })
+                self.selmenu:MenuElement({ id = "predsel", name = "Prediction", value = 1, drop = { "Noddy", "Trus", "gamsteron - not ready yet" } })
                 -- LOAD LIBS
                 require "gsoLibs\\Spell"
                 _G.gsoSDK.Spell = __gsoSpell()
