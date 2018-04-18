@@ -3,12 +3,19 @@ local function gsoFileExist(path)
         if f ~= nil then io.close(f) return true else return false end
 end
 
+local function gsoReadFile(path)
+        local f = assert(io.open(path, "rb"))
+        local content = f:read("*all")
+        f:close()
+        return content
+end
+
 class "__gsoLibLoader"
         
         function __gsoLibLoader:__init(menu)
                 _G.gsoTicks = { All = true, ObjectManager = true, Utilities = true, Cursor = true,  Farm = true, Noddy = true }
                 _G.gsoDraws = { All = true, Spell = true, Cursor = true, TargetSelector = true }
-                if not gsoFileExist(COMMON_PATH.."gsoLibs\\gsoSDK.version") or _G.gsoSDK.AutoUpdate:CanUpdate(COMMON_PATH.."gsoLibs\\gsoSDK.version", "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/gsoSDK.version") then
+                if not gsoFileExist(COMMON_PATH.."gsoLibs\\gsoSDK.version") or _G.gsoSDK.AutoUpdate:CanUpdate(assert(tonumber(gsoReadFile(COMMON_PATH .. "gsoLibs\\gsoSDK.version"))), "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/gsoSDK.version") then
                         _G.gsoSDK.AutoUpdate:Update(COMMON_PATH .. "gsoLibs\\gsoSDK.version", "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/gsoSDK.version", false, false, false)
                         _G.gsoSDK.AutoUpdate:Update(COMMON_PATH .. "gsoLibs\\AutoUpdate.lua", "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/AutoUpdate.lua", false, false, false)
                         _G.gsoSDK.AutoUpdate:Update(COMMON_PATH .. "gsoLibs\\Cursor.lua", "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/Cursor.lua", false, false, false)
