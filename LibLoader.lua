@@ -94,6 +94,7 @@ class "__gsoLibLoader"
                         _G.gsoSDK.Orbwalker:WndMsg(msg, wParam)
                 end)
                 Callback.Add('Draw', function()
+                        if not _G.gsoDraws.All then return end
                         if _G.gsoDraws.TargetSelector then
                                 _G.gsoSDK.TS:Draw()
                         end
