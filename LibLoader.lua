@@ -34,7 +34,7 @@ class "__gsoLibLoader"
                 if not _G.gsoSDK.AutoUpdate:FileExists(SCRIPT_PATH .. "Orbwalker.lua") then
                         _G.gsoSDK.AutoUpdate:Update(SCRIPT_PATH .. "Orbwalker.lua", "https://raw.githubusercontent.com/jachicao/GoS/master/src/Orbwalker.lua", false, false, false)
                 end
-                self.selmenu = MenuElement({name = "Orbwalker & Prediction & TS", id = "gsoorbsel", type = MENU, leftIcon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/seliconjs7sdq.png" })
+                self.selmenu = MenuElement({name = "Orbwalker & Prediction", id = "gsoorbsel", type = MENU, leftIcon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/seliconjs7sdq.png" })
                 self.selmenu:MenuElement({ id = "orbsel", name = "Orbwalker", value = 1, drop = { "Gamsteron", "GOS", "IC" } })
                 self.selmenu:MenuElement({ id = "predsel", name = "Prediction", value = 1, drop = { "Noddy", "Trus", "gamsteron - not ready yet" } })
                 -- LOAD LIBS
