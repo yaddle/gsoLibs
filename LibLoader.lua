@@ -80,7 +80,7 @@ class "__gsoLibLoader"
                                 end
                                 if _G.gsoTicks.ObjectManager then
                                         _G.gsoSDK.ObjectManager:Tick()
-                                        if _G.gsoTicks:Farm then
+                                        if _G.gsoTicks.Farm then
                                                 local enemyMinions = _G.gsoSDK.ObjectManager:GetEnemyMinions(1500, false)
                                                 local allyMinions = _G.gsoSDK.ObjectManager:GetAllyMinions(1500, false)
                                                 _G.gsoSDK.Farm:Tick(allyMinions, enemyMinions)
