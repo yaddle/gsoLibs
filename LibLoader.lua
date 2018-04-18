@@ -2,15 +2,13 @@ class "__gsoLibLoader"
         
         function __gsoLibLoader:__init(menu)
                 -- AUTO UPDATE
-                -- Sikaka Prediction
-                _G.gsoSDK.AutoUpdate:Update(COMMON_PATH .. "HPred.lua", "https://raw.githubusercontent.com/Sikaka/GOSExternal/master/HPred.lua")
                 -- TRUS Prediction
-                _G.gsoSDK.AutoUpdate:Update(COMMON_PATH .. "TPred.lua", "https://raw.githubusercontent.com/Vasilyi/gamingonsteroids/master/Common/TPred.lua")
+                _G.gsoSDK.AutoUpdate:Update(COMMON_PATH .. "TPred.lua", "https://raw.githubusercontent.com/Vasilyi/gamingonsteroids/master/Common/TPred.lua", false, false, false)
                 -- evitaerCi Orbwalker
-                _G.gsoSDK.AutoUpdate:Update(SCRIPT_PATH .. "Orbwalker.lua", "https://raw.githubusercontent.com/jachicao/GoS/master/src/Orbwalker.lua")
+                _G.gsoSDK.AutoUpdate:Update(SCRIPT_PATH .. "Orbwalker.lua", "https://raw.githubusercontent.com/jachicao/GoS/master/src/Orbwalker.lua", false, false, false)
                 self.FilesToDownload = {
                         {
-                                LocalVersion = 0.02,
+                                LocalVersion = 0.03,
                                 LocalScript = COMMON_PATH .. "gsoLibs\\AutoUpdate.lua",
                                 OnlineScript = "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/AutoUpdate.lua",
                                 OnlineVersion = "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/version/AutoUpdate.version"
@@ -64,14 +62,14 @@ class "__gsoLibLoader"
                                 OnlineVersion = "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/version/Prediction.version"
                         },
                         {
-                                LocalVersion = 0.02,
+                                LocalVersion = 0.03,
                                 LocalScript = COMMON_PATH .. "gsoLibs\\Spell.lua",
                                 OnlineScript = "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/Spell.lua",
                                 OnlineVersion = "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/version/Spell.version"
                         }
                 }
-                _G.gsoSDK.AutoUpdate:Update(COMMON_PATH .. "gsoLibs\\gsoSDK.lua", "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/gsoSDK.lua")
-                _G.gsoSDK.AutoUpdate:Update(SCRIPT_PATH .. "testLoader.lua", "https://raw.githubusercontent.com/gamsteron/GoSExt/master/testLoader.lua")
+                _G.gsoSDK.AutoUpdate:Update(COMMON_PATH .. "gsoLibs\\gsoSDK.lua", "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/gsoSDK.lua", false, false, false)
+                _G.gsoSDK.AutoUpdate:Update(SCRIPT_PATH .. "testLoader.lua", "https://raw.githubusercontent.com/gamsteron/GoSExt/master/testLoader.lua", false, false, false)
                 local boolean = false
                 for i = 1, #self.FilesToDownload do
                         local f = self.FilesToDownload[i]
