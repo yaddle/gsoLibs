@@ -1,85 +1,38 @@
+local function gsoFileExist(path)
+        local f = io.open(path,"r")
+        if f ~= nil then io.close(f) return true else return false end
+end
+
 class "__gsoLibLoader"
         
         function __gsoLibLoader:__init(menu)
-                -- AUTO UPDATE
-                -- TRUS Prediction
-                _G.gsoSDK.AutoUpdate:Update(COMMON_PATH .. "TPred.lua", "https://raw.githubusercontent.com/Vasilyi/gamingonsteroids/master/Common/TPred.lua", false, false, false)
-                -- evitaerCi Orbwalker
-                _G.gsoSDK.AutoUpdate:Update(SCRIPT_PATH .. "Orbwalker.lua", "https://raw.githubusercontent.com/jachicao/GoS/master/src/Orbwalker.lua", false, false, false)
-                self.FilesToDownload = {
-                        {
-                                LocalVersion = 0.03,
-                                LocalScript = COMMON_PATH .. "gsoLibs\\AutoUpdate.lua",
-                                OnlineScript = "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/AutoUpdate.lua",
-                                OnlineVersion = "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/version/AutoUpdate.version"
-                        },
-                        {
-                                LocalVersion = 0.01,
-                                LocalScript = COMMON_PATH .. "gsoLibs\\Cursor.lua",
-                                OnlineScript = "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/Cursor.lua",
-                                OnlineVersion = "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/version/Cursor.version"
-                        },
-                        {
-                                LocalVersion = 0.01,
-                                LocalScript = COMMON_PATH .. "gsoLibs\\Farm.lua",
-                                OnlineScript = "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/Farm.lua",
-                                OnlineVersion = "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/version/Farm.version"
-                        },
-                        {
-                                LocalVersion = 0.01,
-                                LocalScript = COMMON_PATH .. "gsoLibs\\ObjectManager.lua",
-                                OnlineScript = "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/ObjectManager.lua",
-                                OnlineVersion = "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/version/ObjectManager.version"
-                        },
-                        {
-                                LocalVersion = 0.03,
-                                LocalScript = COMMON_PATH .. "gsoLibs\\Orbwalker.lua",
-                                OnlineScript = "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/Orbwalker.lua",
-                                OnlineVersion = "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/version/Orbwalker.version"
-                        },
-                        {
-                                LocalVersion = 0.01,
-                                LocalScript = COMMON_PATH .. "gsoLibs\\TS.lua",
-                                OnlineScript = "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/TS.lua",
-                                OnlineVersion = "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/version/TS.version"
-                        },
-                        {
-                                LocalVersion = 0.01,
-                                LocalScript = COMMON_PATH .. "gsoLibs\\Utilities.lua",
-                                OnlineScript = "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/Utilities.lua",
-                                OnlineVersion = "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/version/Utilities.version"
-                        },
-                        {
-                                LocalVersion = 0.01,
-                                LocalScript = COMMON_PATH .. "gsoLibs\\Activator.lua",
-                                OnlineScript = "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/Activator.lua",
-                                OnlineVersion = "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/version/Activator.version"
-                        },
-                        {
-                                LocalVersion = 0.03,
-                                LocalScript = COMMON_PATH .. "gsoLibs\\Prediction.lua",
-                                OnlineScript = "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/Prediction.lua",
-                                OnlineVersion = "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/version/Prediction.version"
-                        },
-                        {
-                                LocalVersion = 0.03,
-                                LocalScript = COMMON_PATH .. "gsoLibs\\Spell.lua",
-                                OnlineScript = "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/Spell.lua",
-                                OnlineVersion = "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/version/Spell.version"
-                        }
-                }
-                _G.gsoSDK.AutoUpdate:Update(COMMON_PATH .. "gsoLibs\\gsoSDK.lua", "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/gsoSDK.lua", false, false, false)
-                _G.gsoSDK.AutoUpdate:Update(SCRIPT_PATH .. "testLoader.lua", "https://raw.githubusercontent.com/gamsteron/GoSExt/master/testLoader.lua", false, false, false)
-                local boolean = false
-                for i = 1, #self.FilesToDownload do
-                        local f = self.FilesToDownload[i]
-                        if _G.gsoSDK.AutoUpdate:CanUpdate(f.LocalVersion, f.OnlineVersion) then
-                                boolean = true
-                                _G.gsoSDK.AutoUpdate:Update(f.LocalScript, f.OnlineScript)
-                        end
-                end
-                if not boolean then
+                _G.gsoTicks = { All = true, ObjectManager = true, Utilities = true, Cursor = true,  Farm = true, Noddy = true }
+                _G.gsoDraws = { All = true, Spell = true, Cursor = true, TargetSelector = true }
+                if not gsoFileExist(COMMON_PATH.."gsoLibs\\gsoSDK.version") or _G.gsoSDK.AutoUpdate:CanUpdate(COMMON_PATH.."gsoLibs\\gsoSDK.version", "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/gsoSDK.version") then
+                        _G.gsoSDK.AutoUpdate:Update(COMMON_PATH .. "gsoLibs\\gsoSDK.version", "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/gsoSDK.version", false, false, false)
+                        _G.gsoSDK.AutoUpdate:Update(COMMON_PATH .. "gsoLibs\\AutoUpdate.lua", "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/AutoUpdate.lua", false, false, false)
+                        _G.gsoSDK.AutoUpdate:Update(COMMON_PATH .. "gsoLibs\\Cursor.lua", "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/Cursor.lua", false, false, false)
+                        _G.gsoSDK.AutoUpdate:Update(COMMON_PATH .. "gsoLibs\\Farm.lua", "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/Farm.lua", false, false, false)
+                        _G.gsoSDK.AutoUpdate:Update(COMMON_PATH .. "gsoLibs\\ObjectManager.lua", "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/ObjectManager.lua", false, false, false)
+                        _G.gsoSDK.AutoUpdate:Update(COMMON_PATH .. "gsoLibs\\Orbwalker.lua", "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/Orbwalker.lua", false, false, false)
+                        _G.gsoSDK.AutoUpdate:Update(COMMON_PATH .. "gsoLibs\\TS.lua", "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/TS.lua", false, false, false)
+                        _G.gsoSDK.AutoUpdate:Update(COMMON_PATH .. "gsoLibs\\Utilities.lua", "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/Utilities.lua", false, false, false)
+                        _G.gsoSDK.AutoUpdate:Update(COMMON_PATH .. "gsoLibs\\Activator.lua", "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/Activator.lua", false, false, false)
+                        _G.gsoSDK.AutoUpdate:Update(COMMON_PATH .. "gsoLibs\\Prediction.lua", "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/Prediction.lua", false, false, false)
+                        _G.gsoSDK.AutoUpdate:Update(COMMON_PATH .. "gsoLibs\\Spell.lua", "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/Spell.lua", false, false, false)
+                        _G.gsoSDK.AutoUpdate:Update(COMMON_PATH .. "gsoLibs\\gsoSDK.lua", "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/gsoSDK.lua", false, false, false)
+                        _G.gsoSDK.AutoUpdate:Update(COMMON_PATH .. "gsoLibs\\LibLoader.lua", "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/LibLoader.lua", false, false, false)
+                        print("gsoLibs - Successfully Downloaded !")
+                else
                         print("gsoLibs - No Updates Found.")
+                end
+                -- TRUS Prediction
+                if not _G.gsoSDK.AutoUpdate:FileExists(COMMON_PATH.."TPred.lua") then
+                        _G.gsoSDK.AutoUpdate:Update(COMMON_PATH .. "TPred.lua", "https://raw.githubusercontent.com/Vasilyi/gamingonsteroids/master/Common/TPred.lua", false, false, false)
+                end
+                -- evitaerCi Orbwalker
+                if not _G.gsoSDK.AutoUpdate:FileExists(SCRIPT_PATH .. "Orbwalker.lua") then
+                        _G.gsoSDK.AutoUpdate:Update(SCRIPT_PATH .. "Orbwalker.lua", "https://raw.githubusercontent.com/jachicao/GoS/master/src/Orbwalker.lua", false, false, false)
                 end
                 self.selmenu = MenuElement({name = "Orbwalker & Prediction & TS", id = "gsoorbsel", type = MENU, leftIcon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/seliconjs7sdq.png" })
                 self.selmenu:MenuElement({ id = "orbsel", name = "Orbwalker", value = 1, drop = { "Gamsteron", "GOS", "IC" } })
@@ -110,13 +63,30 @@ class "__gsoLibLoader"
                 _G.gsoSDK.Cursor:CreateDrawMenu(menu.gsodraw)
                 _G.gsoSDK.Orbwalker:CreateDrawMenu(menu.gsodraw)
                 Callback.Add('Tick', function()
-                        _G.gsoSDK.ObjectManager:Tick()
-                        _G.gsoSDK.Utilities:Tick()
-                        _G.gsoSDK.Cursor:Tick()
-                        local enemyMinions = _G.gsoSDK.ObjectManager:GetEnemyMinions(1500, false)
-                        local allyMinions = _G.gsoSDK.ObjectManager:GetAllyMinions(1500, false)
-                        _G.gsoSDK.Farm:Tick(allyMinions, enemyMinions)
-                        _G.gsoSDK.TS:Tick()
+                        if self.selmenu.orbsel:Value() == 1 then
+                                _G.gsoSDK.ObjectManager:Tick()
+                                _G.gsoSDK.Utilities:Tick()
+                                _G.gsoSDK.Cursor:Tick()
+                                local enemyMinions = _G.gsoSDK.ObjectManager:GetEnemyMinions(1500, false)
+                                local allyMinions = _G.gsoSDK.ObjectManager:GetAllyMinions(1500, false)
+                                _G.gsoSDK.Farm:Tick(allyMinions, enemyMinions)
+                                _G.gsoSDK.TS:Tick()
+                        elseif _G.gsoTicks.All then
+                                if _G.gsoTicks.Utilities then
+                                        _G.gsoSDK.Utilities:Tick()
+                                end
+                                if _G.gsoTicks.Cursor then
+                                        _G.gsoSDK.Cursor:Tick()
+                                end
+                                if _G.gsoTicks.ObjectManager then
+                                        _G.gsoSDK.ObjectManager:Tick()
+                                        if _G.gsoTicks:Farm then
+                                                local enemyMinions = _G.gsoSDK.ObjectManager:GetEnemyMinions(1500, false)
+                                                local allyMinions = _G.gsoSDK.ObjectManager:GetAllyMinions(1500, false)
+                                                _G.gsoSDK.Farm:Tick(allyMinions, enemyMinions)
+                                        end
+                                end
+                        end
                         _G.gsoSDK.Orbwalker:Tick()
                 end)
                 Callback.Add('WndMsg', function(msg, wParam)
@@ -124,8 +94,12 @@ class "__gsoLibLoader"
                         _G.gsoSDK.Orbwalker:WndMsg(msg, wParam)
                 end)
                 Callback.Add('Draw', function()
-                         _G.gsoSDK.TS:Draw()
-                         _G.gsoSDK.Cursor:Draw()
-                         _G.gsoSDK.Orbwalker:Draw()
-                 end)
+                        if _G.gsoDraws.TargetSelector then
+                                _G.gsoSDK.TS:Draw()
+                        end
+                        if _G.gsoDraws.Cursor then
+                                _G.gsoSDK.Cursor:Draw()
+                        end
+                        _G.gsoSDK.Orbwalker:Draw()
+                end)
         end

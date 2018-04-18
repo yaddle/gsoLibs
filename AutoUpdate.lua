@@ -160,6 +160,11 @@ end
 
 class '__gsoAutoUpdate'
 
+        function __gsoAutoUpdate:FileExists(path)
+                local f = io.open(path,"r")
+                if f ~= nil then io.close(f) return true else return false end
+        end
+        
         function __gsoAutoUpdate:CanUpdate(localVersion, webVersion, http)
                 return gsoCanUpdate(localVersion, webVersion, http)
         end

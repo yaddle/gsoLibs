@@ -37,12 +37,14 @@ local function OnWaypoint(unit)
         return _OnWaypoint[unit.networkID]
 end
 Callback.Add("Tick", function()
+        if not _G.gsoTicks.Noddy or not _G.gsoTicks.All then return end
         if GetTickCount() - noddyTick > 100 then
-                local enemies = _G.gsoSDK.ObjectManager:GetEnemyHeroes(math.huge, false, "spell")
-                for i = 1, #enemies do
-                        local enemy = enemies[i]
-                        OnVision(enemy)
-                        OnWaypoint(enemy)
+                for i = 1, Game.HeroCount() do
+                        local hero = Game.Hero(i)
+                        if hero and hero.team ~= myHero.team then
+                                OnVision(hero)
+                                OnWaypoint(hero)
+                        end
                 end
                 noddyTick = GetTickCount()
         end
