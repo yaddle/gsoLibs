@@ -1,6 +1,9 @@
 local myHero = myHero
 
 -- NODDY PRED START
+local function GetDistance(p1,p2)
+        return  math.sqrt(math.pow((p2.x - p1.x),2) + math.pow((p2.y - p1.y),2) + math.pow((p2.z - p1.z),2))
+end
 local function IsImmobileTarget(unit)
         for i = 0, unit.buffCount do
                 local buff = unit:GetBuff(i)
@@ -25,9 +28,9 @@ local function OnWaypoint(unit)
                 _OnWaypoint[unit.networkID] = {startPos = unit.pos, pos = unit.posTo , speed = unit.ms, time = Game.Timer()}
                 DelayAction(function()
                         local time = (Game.Timer() - _OnWaypoint[unit.networkID].time)
-                        local speed = GetDistance2D(_OnWaypoint[unit.networkID].startPos,unit.pos)/(Game.Timer() - _OnWaypoint[unit.networkID].time)
+                        local speed = GetDistance(_OnWaypoint[unit.networkID].startPos,unit.pos)/(Game.Timer() - _OnWaypoint[unit.networkID].time)
                         if speed > 1250 and time > 0 and unit.posTo == _OnWaypoint[unit.networkID].pos and GetDistance(unit.pos,_OnWaypoint[unit.networkID].pos) > 200 then
-                                _OnWaypoint[unit.networkID].speed = GetDistance2D(_OnWaypoint[unit.networkID].startPos,unit.pos)/(Game.Timer() - _OnWaypoint[unit.networkID].time)
+                                _OnWaypoint[unit.networkID].speed = GetDistance(_OnWaypoint[unit.networkID].startPos,unit.pos)/(Game.Timer() - _OnWaypoint[unit.networkID].time)
                         end
                 end, 0.05)
         end
@@ -41,6 +44,7 @@ Callback.Add("Tick", function()
                         OnVision(enemy)
                         OnWaypoint(enemy)
                 end
+                noddyTick = GetTickCount()
         end
 end)
 local function GetPred(unit,speed,delay)
@@ -70,9 +74,9 @@ end
 class "__gsoPrediction"
         
         function __gsoPrediction:__init(menu)
-                require "TPred"
-                require "HPred"
                 self.menu = menu
+                require "TPred"
+                --require "HPred"
         end
         
         function __gsoPrediction:UPL_GetPrediction(unit, delay, radius, range, speed, from, collision, spelltype)
@@ -89,11 +93,11 @@ class "__gsoPrediction"
                         if Vector(CastPosition):DistanceTo(Vector(from)) > range - 35 then return -1, nil end
                         if collision and unit:GetCollision(radius,speed, delay) > 0 then return -1, nil end
                         return HitChance, CastPosition
-                elseif self.menu.predsel:Value() == 3 then
-                        local HitChance, CastPosition = GetHitchance(from, unit, range, delay, speed, radius, collision)
+                --[[elseif self.menu.predsel:Value() == 3 then
+                        local HitChance, CastPosition = HPred:GetHitchance(from, unit, range, delay, speed, radius, collision)
                         if not CastPosition or HitChance < 1 then return -1, nil end
                         if Vector(CastPosition):DistanceTo(Vector(from)) > range - 35 then return -1, nil end
                         if collision and unit:GetCollision(radius,speed, delay) > 0 then return -1, nil end
-                        return HitChance, CastPosition
+                        return HitChance, CastPosition--]]
                 end
         end
