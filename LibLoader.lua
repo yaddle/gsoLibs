@@ -94,12 +94,16 @@ class "__gsoLibLoader"
                         _G.gsoSDK.Orbwalker:WndMsg(msg, wParam)
                 end)
                 Callback.Add('Draw', function()
-                        if not _G.gsoDraws.All then return end
-                        if _G.gsoDraws.TargetSelector then
+                        if self.selmenu.orbsel:Value() == 1 then
                                 _G.gsoSDK.TS:Draw()
-                        end
-                        if _G.gsoDraws.Cursor then
                                 _G.gsoSDK.Cursor:Draw()
+                        elseif _G.gsoTicks.All then
+                                if _G.gsoDraws.TargetSelector then
+                                        _G.gsoSDK.TS:Draw()
+                                end
+                                if _G.gsoDraws.Cursor then
+                                        _G.gsoSDK.Cursor:Draw()
+                                end
                         end
                         _G.gsoSDK.Orbwalker:Draw()
                 end)
