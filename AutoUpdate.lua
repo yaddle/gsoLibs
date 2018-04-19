@@ -129,7 +129,7 @@ local function gsoSaveToFile(path, str)
         f:close()
 end
 
-local function gsoUpdate(localScript, webScript, needReload, http)
+local function gsoUpdate(localScript, webScript, needReload, http, msg)
         -- file name
         local fileName = gsoGetName(webScript, string.byte("/"))
         -- remove http://, https://
@@ -147,7 +147,7 @@ local function gsoUpdate(localScript, webScript, needReload, http)
                 local success, text, code, headers, status = gsoDownloadFile(webScript, http)
                 if success then
                         gsoSaveToFile(localScript, text)
-                        print(tostring(fileName .. ' - Successfully Downloaded !' .. (needReload and " Please Reload with 2x F6." or "")))
+                        if msg then print(tostring(fileName .. ' - Successfully Downloaded !' .. (needReload and " Please Reload with 2x F6." or ""))) end
                         return true
                 end
                 whileCount = whileCount + 1
@@ -160,12 +160,17 @@ end
 
 class '__gsoAutoUpdate'
 
+        function __gsoAutoUpdate:FileExists(path)
+                local f = io.open(path,"r")
+                if f ~= nil then io.close(f) return true else return false end
+        end
+        
         function __gsoAutoUpdate:CanUpdate(localVersion, webVersion, http)
                 return gsoCanUpdate(localVersion, webVersion, http)
         end
         
-        function __gsoAutoUpdate:Update(localScript, webScript, needReload, http)
-                return gsoUpdate(localScript, webScript, needReload, http)
+        function __gsoAutoUpdate:Update(localScript, webScript, needReload, http, msg)
+                return gsoUpdate(localScript, webScript, needReload, http, msg)
         end
 
 

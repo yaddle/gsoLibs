@@ -31,6 +31,9 @@ end
 
 class "__gsoSpell"
         
+        function __gsoSpell:__init()
+        end
+        
         function __gsoSpell:GetDamage(unit, spellData)
                 return gsoCalculateDmg(unit, spellData)
         end
