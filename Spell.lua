@@ -88,10 +88,16 @@ class "__gsoSpell"
                         self.spellDraw = { q = true, qr = 975, w = true, wr = 325 }
                 elseif myHero.charName == "Draven" then
                         self.spellDraw = { e = true, er = 1050 }
-                elseif myHero.charName == "Twitch" then
-                        self.spellDraw = { w = true, wr = 950, e = true, er = 1200, r = true, rf = function() return myHero.range + 300 + ( myHero.boundingRadius * 2 ) end }
+                elseif myHero.charName == "Ekko" then
+                        self.spellDraw = { q = true, qr = 1075, w = true, wr = 1600, e = true, er = 325 }
+                elseif myHero.charName == "Elise" then
+                        -- self.spellDraw = { need check form buff qHuman = 625, qSpider = 475, wHuman = 950, wSpider = math.huge(none), eHuman = 1075, eSpider = 750 }
+                elseif myHero.charName == "Evelynn" then
+                        self.spellDraw = { q = true, qr = 800, w = true, wf = function() local wLvl = myHero:GetSpellData(_W).level; if wLvl == 0 then return 1200 else return 1100 + 100 * wLvl end end, e = true, er = 210, r = true, rr = 450 }
                 elseif myHero.charName == "Ezreal" then
                         self.spellDraw = { q = true, qr = 1150, w = true, wr = 1000, e = true, er = 475 }
+                elseif myHero.charName == "Twitch" then
+                        self.spellDraw = { w = true, wr = 950, e = true, er = 1200, r = true, rf = function() return myHero.range + 300 + ( myHero.boundingRadius * 2 ) end }
                 elseif myHero.charName == "Jhin" then
                         self.spellDraw = { q = true, qr = 550 + 120, w = true, wr = 3000, e = true, er = 750, r = true, rr = 3500 }
                 elseif myHero.charName == "Jinx" then
