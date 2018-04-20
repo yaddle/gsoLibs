@@ -80,10 +80,16 @@ class "__gsoSpell"
                         self.spellDraw = { q = true, qr = 950, w = true, wr = 650, e = true, er = 500, r = true, rr = 175 + 120 }
                 elseif myHero.charName == "Corki" then
                         self.spellDraw = { q = true, qr = 825, w = true, wr = 600, r = true, rr = 1225 }
-                elseif myHero.charName == "Twitch" then
-                        self.spellDraw = { w = true, wr = 950, e = true, er = 1200, r = true, rf = function() return myHero.range + 300 + ( myHero.boundingRadius * 2 ) end }
+                elseif myHero.charName == "Darius" then
+                        self.spellDraw = { q = true, qr = 425, w = true, wr = 300, e = true, er = 535, r = true, rr = 460 + 120 }
+                elseif myHero.charName == "Diana" then
+                        self.spellDraw = { q = true, qr = 900, w = true, wr = 200, e = true, er = 450, r = true, rr = 825 }
+                elseif myHero.charName == "DrMundo" then
+                        self.spellDraw = { q = true, qr = 975, w = true, wr = 325 }
                 elseif myHero.charName == "Draven" then
                         self.spellDraw = { e = true, er = 1050 }
+                elseif myHero.charName == "Twitch" then
+                        self.spellDraw = { w = true, wr = 950, e = true, er = 1200, r = true, rf = function() return myHero.range + 300 + ( myHero.boundingRadius * 2 ) end }
                 elseif myHero.charName == "Ezreal" then
                         self.spellDraw = { q = true, qr = 1150, w = true, wr = 1000, e = true, er = 475 }
                 elseif myHero.charName == "Jhin" then
