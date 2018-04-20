@@ -13,6 +13,7 @@ end
 class "__gsoLibLoader"
         
         function __gsoLibLoader:__init(menu)
+                self.menu = menu
                 _G.gsoTicks = { All = true, ObjectManager = true, Utilities = true, Cursor = true,  Farm = true, Noddy = true }
                 _G.gsoDraws = { All = true, Spell = true, Cursor = true, TargetSelector = true }
                 if not gsoFileExist(COMMON_PATH.."gsoLibs\\gsoSDK.version") or _G.gsoSDK.AutoUpdate:CanUpdate(assert(tonumber(gsoReadFile(COMMON_PATH .. "gsoLibs\\gsoSDK.version"))), "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/gsoSDK.version") then
@@ -66,6 +67,7 @@ class "__gsoLibLoader"
                 _G.gsoSDK.Orbwalker:CreateMenu(menu, self.selmenu)
                 menu:MenuElement({name = "Drawings", id = "gsodraw", leftIcon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/circles.png", type = MENU })
                 menu.gsodraw:MenuElement({name = "Enabled",  id = "enabled", value = true})
+                _G.gsoSDK.Spell:CreateDrawMenu(menu.gsodraw)
                 _G.gsoSDK.TS:CreateDrawMenu(menu.gsodraw)
                 _G.gsoSDK.Cursor:CreateDrawMenu(menu.gsodraw)
                 _G.gsoSDK.Orbwalker:CreateDrawMenu(menu.gsodraw)
@@ -99,8 +101,10 @@ class "__gsoLibLoader"
                 Callback.Add('WndMsg', function(msg, wParam)
                         _G.gsoSDK.TS:WndMsg(msg, wParam)
                         _G.gsoSDK.Orbwalker:WndMsg(msg, wParam)
+                        _G.gsoSDK.Spell:WndMsg(msg, wParam)
                 end)
                 Callback.Add('Draw', function()
+                        if not self.menu.gsodraw.enabled:Value() then return end
                         if self.selmenu.orbsel:Value() == 1 then
                                 _G.gsoSDK.TS:Draw()
                                 _G.gsoSDK.Cursor:Draw()
@@ -111,6 +115,9 @@ class "__gsoLibLoader"
                                 if _G.gsoDraws.Cursor then
                                         _G.gsoSDK.Cursor:Draw()
                                 end
+                        end
+                        if _G.gsoDraws.Spell then
+                                _G.gsoSDK.Spell:Draw()
                         end
                         _G.gsoSDK.Orbwalker:Draw()
                 end)

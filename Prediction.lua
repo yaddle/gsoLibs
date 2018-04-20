@@ -80,7 +80,8 @@ class "__gsoPrediction"
                 require "TPred"
         end
         
-        function __gsoPrediction:UPL_GetPrediction(unit, delay, radius, range, speed, from, collision, spelltype)
+        function __gsoPrediction:UPL_GetPrediction(unit, delay, radius, range, speed, from, collision, sType)
+                if not unit then return -1, nil end
                 from = from.x and from or from.pos
                 if self.menu.predsel:Value() == 1 then
                         local castpos = GetPred(unit, speed, delay)
@@ -89,7 +90,7 @@ class "__gsoPrediction"
                         if collision and unit:GetCollision(radius,speed, delay) > 0 then return -1, nil end
                         return 10, castpos
                 elseif self.menu.predsel:Value() == 2 then
-                        local CastPosition, HitChance, Position = TPred:GetBestCastPosition(unit, delay, radius, range, speed, from, false, spelltype)
+                        local CastPosition, HitChance, Position = TPred:GetBestCastPosition(unit, delay, radius, range, speed, from, false, sType)
                         if not CastPosition or HitChance < 1 then return -1, nil end
                         if Vector(CastPosition):DistanceTo(Vector(from)) > range - 35 then return -1, nil end
                         if collision and unit:GetCollision(radius,speed, delay) > 0 then return -1, nil end

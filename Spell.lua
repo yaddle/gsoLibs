@@ -1,4 +1,13 @@
 local myHero = myHero
+local gsoLastQ = 0
+local gsoLastQk = 0
+local gsoLastW = 0
+local gsoLastWk = 0
+local gsoLastE = 0
+local gsoLastEk = 0
+local gsoLastR = 0
+local gsoLastRk = 0
+local gsoDelayedSpell = {}
 
 local function gsoReducedDmg(unit, dmg, isAP)
         local def = isAP and unit.magicResist - myHero.magicPen or unit.armor - myHero.armorPen
@@ -32,41 +41,327 @@ end
 class "__gsoSpell"
         
         function __gsoSpell:__init()
+                self.spellDraw = { q = false, w = false, e = false, r = false }
+                if myHero.charName == "Twitch" then
+                        self.spellDraw = { w = true, wr = 950, e = true, er = 1200, r = true, rf = function() return myHero.range + 300 + ( myHero.boundingRadius * 2 ) end }
+                elseif myHero.charName == "Ashe" then
+                        self.spellDraw = { w = true, wr = 1200 }
+                elseif myHero.charName == "Caitlyn" then
+                        self.spellDraw = { q = true, qr = 1250, w = true, wr = 800, e = true, er = 750, r = true, rf = function() local rLvl = myHero:GetSpellData(_R).level; if rLvl == 0 then return 2000 else return 1500 + 500 * rLvl end end }
+                elseif myHero.charName == "Corki" then
+                        self.spellDraw = { q = true, qr = 825, w = true, wr = 600, r = true, rr = 1225 }
+                elseif myHero.charName == "Draven" then
+                        self.spellDraw = { e = true, er = 1050 }
+                elseif myHero.charName == "Ezreal" then
+                        self.spellDraw = { q = true, qr = 1150, w = true, wr = 1000, e = true, er = 475 }
+                elseif myHero.charName == "Jhin" then
+                        self.spellDraw = { q = true, qr = 550 + 120, w = true, wr = 3000, e = true, er = 750, r = true, rr = 3500 }
+                elseif myHero.charName == "Jinx" then
+                        self.spellDraw = { q = true, qf = function() if self:HasBuff(myHero, "jinxq") then return 525 + myHero.boundingRadius + 35 else local qExtra = 25 * myHero:GetSpellData(_Q).level; return 575 + qExtra + myHero.boundingRadius + 35 end end, w = true, wr = 1450, e = true, er = 900 }
+                elseif myHero.charName == "KogMaw" then
+                        self.spellDraw = { q = true, qr = 1175, e = true, er = 1280, r = true, rf = function() local rlvl = myHero:GetSpellData(_R).level; if rlvl == 0 then return 1200 else return 900 + 300 * rlvl end end }
+                elseif myHero.charName == "Lucian" then
+                        self.spellDraw = { q = true, qr = 500+120, w = true, wr = 900+350, e = true, er = 425, r = true, rr = 1200 }
+                elseif myHero.charName == "Nami" then
+                        self.spellDraw = { q = true, qr = 875, w = true, wr = 725, e = true, er = 800, r = true, rr = 2750 }
+                elseif myHero.charName == "Sivir" then
+                        self.spellDraw = { q = true, qr = 1250, r = true, rr = 1000 }
+                elseif myHero.charName == "Teemo" then
+                        self.spellDraw = { q = true, qr = 680, r = true, rf = function() local rLvl = myHero:GetSpellData(_R).level; if rLvl == 0 then rLvl = 1 end return 150 + ( 250 * rLvl ) end }
+                elseif myHero.charName == "Tristana" then
+                        self.spellDraw = { w = true, wr = 900 }
+                elseif myHero.charName == "Varus" then
+                        self.spellDraw = { q = true, qr = 1650, e = true, er = 950, r = true, rr = 1075 }
+                elseif myHero.charName == "Vayne" then
+                        self.spellDraw = { q = true, qr = 300, e = true, er = 550 }
+                elseif myHero.charName == "Viktor" then
+                        self.spellDraw = { q = true, qr = 600 + 2 * myHero.boundingRadius, w = true, wr = 700, e = true, er = 550 }
+                elseif myHero.charName == "Xayah" then
+                        self.spellDraw = { q = true, qr = 1100 }
+                end
+        end
+        
+        function __gsoSpell:GetLastSpellTimers()
+                return gsoLastQ, gsoLastQk, gsoLastW, gsoLastWk, gsoLastE, gsoLastEk, gsoLastR, gsoLastRk
+        end
+        
+        function __gsoSpell:HasBuff(unit, bName)
+                bName = bName:lower()
+                for i = 0, unit.buffCount do
+                        local buff = unit:GetBuff(i)
+                        if buff and buff.count > 0 and buff.name:lower() == bName then
+                                return true
+                        end
+                end
+                return false
+        end
+        
+        function __gsoSpell:GetBuffDuration(unit, bName)
+                bName = bName:lower()
+                for i = 0, unit.buffCount do
+                        local buff = unit:GetBuff(i)
+                        if buff and buff.count > 0 and buff.name:lower() == bName then
+                                return buff.duration
+                        end
+                end
+                return 0
+        end
+        
+        function __gsoSpell:GetBuffCount(unit, bName)
+                bName = bName:lower()
+                for i = 0, unit.buffCount do
+                        local buff = unit:GetBuff(i)
+                        if buff and buff.count > 0 and buff.name:lower() == bName then
+                                return buff.count
+                        end
+                end
+                return 0
+        end
+        
+        function __gsoSpell:GetBuffStacks(unit, bName)
+                bName = bName:lower()
+                for i = 0, unit.buffCount do
+                        local buff = unit:GetBuff(i)
+                        if buff and buff.count > 0 and buff.name:lower() == bName then
+                                return buff.stacks
+                        end
+                end
+                return 0
         end
         
         function __gsoSpell:GetDamage(unit, spellData)
                 return gsoCalculateDmg(unit, spellData)
         end
         
-        function __gsoSpell:IsReady(spell)
-                return _G.gsoSDK.Cursor.IsCursorReady() and Game.CanUseSpell(spell) == 0
+        function __gsoSpell:CheckSpellDelays(delays)
+                if Game.Timer() < gsoLastQ + delays.q or Game.Timer() < gsoLastQk + delays.q then return false end
+                if Game.Timer() < gsoLastW + delays.w or Game.Timer() < gsoLastWk + delays.w then return false end
+                if Game.Timer() < gsoLastE + delays.e or Game.Timer() < gsoLastEk + delays.e then return false end
+                if Game.Timer() < gsoLastR + delays.r or Game.Timer() < gsoLastRk + delays.r then return false end
+                return true
         end
         
-        function __gsoSpell:CastSpell(spell, target)
+        function __gsoSpell:IsReady(spell, delays)
+                return _G.gsoSDK.Cursor.IsCursorReady() and self:CheckSpellDelays(delays) and Game.CanUseSpell(spell) == 0
+        end
+        
+        function __gsoSpell:CastSpell(spell, target, linear)
                 if not spell then return false end
-                if spell == _Q then
+                local isQ = spell == _Q
+                local isW = spell == _W
+                local isE = spell == _E
+                local isR = spell == _R
+                if isQ then
                         spell = HK_Q
-                elseif spell == _W then
+                        if Game.Timer() < gsoLastQ + 0.35 then
+                                return false
+                        end
+                elseif isW then
                         spell = HK_W
-                elseif spell == _E then
+                        if Game.Timer() < gsoLastW + 0.35 then
+                                return false
+                        end
+                elseif isE then
                         spell = HK_E
-                elseif spell == _R then
+                        if Game.Timer() < gsoLastE + 0.35 then
+                                return false
+                        end
+                elseif isR then
                         spell = HK_R
+                        if Game.Timer() < gsoLastR + 0.35 then
+                                return false
+                        end
                 end
+                local result = false
                 if not target then
                         Control.KeyDown(spell)
                         Control.KeyUp(spell)
-                        return true
+                        result = true
                 else
                         local castpos = target.x and target or target.pos
+                        if linear then myHero.pos:Extended(castpos, 750) end
                         if castpos:ToScreen().onScreen then
                                 _G.gsoSDK.Cursor:SetCursor(cursorPos, castpos, 0.06)
                                 Control.SetCursorPos(castpos)
                                 Control.KeyDown(spell)
                                 Control.KeyUp(spell)
                                 _G.gsoSDK.Orbwalker:ResetMove()
-                                return true
+                                result = true
                         end
                 end
-                return false
+                if result then
+                        if isQ then
+                                gsoLastQ = Game.Timer()
+                        elseif isW then
+                                gsoLastW = Game.Timer()
+                        elseif isE then
+                                gsoLastE = Game.Timer()
+                        elseif isR then
+                                gsoLastR = Game.Timer()
+                        end
+                end
+                return result
+        end
+        
+        function __gsoSpell:CastManualSpell(spell)
+                local kNum = 0
+                if spell == _W then
+                        kNum = 1
+                elseif spell == _E then
+                        kNum = 2
+                elseif spell == _R then
+                        kNum = 3
+                end
+                if Game.CanUseSpell(spell) == 0 then
+                        for k,v in pairs(gsoDelayedSpell) do
+                                if k == kNum then
+                                        if _G.gsoSDK.Cursor.IsCursorReady() then
+                                                v[1]()
+                                                _G.gsoSDK.Cursor:SetCursor(cursorPos, nil, 0.05)
+                                                if k == 0 then
+                                                        gsoLastQ = Game.Timer()
+                                                elseif k == 1 then
+                                                        gsoLastW = Game.Timer()
+                                                elseif k == 2 then
+                                                        gsoLastE = Game.Timer()
+                                                elseif k == 3 then
+                                                        gsoLastR = Game.Timer()
+                                                end
+                                                gsoDelayedSpell[k] = nil
+                                                break
+                                        end
+                                        if Game.Timer() - v[2] > 0.125 then
+                                                gsoDelayedSpell[k] = nil
+                                        end
+                                        break
+                                end
+                        end
+                end
+        end
+        
+        function __gsoSpell:WndMsg(msg, wParam)
+                local manualNum = -1
+                if wParam == HK_Q and Game.Timer() > gsoLastQk + 1 and Game.CanUseSpell(_Q) == 0 then
+                        gsoLastQk = Game.Timer()
+                        manualNum = 0
+                elseif wParam == HK_W and Game.Timer() > gsoLastWk + 1 and Game.CanUseSpell(_W) == 0 then
+                        gsoLastWk = Game.Timer()
+                        manualNum = 1
+                elseif wParam == HK_E and Game.Timer() > gsoLastEk + 1 and Game.CanUseSpell(_E) == 0 then
+                        gsoLastEk = Game.Timer()
+                        manualNum = 2
+                elseif wParam == HK_R and Game.Timer() > gsoLastRk + 1 and Game.CanUseSpell(_R) == 0 then
+                        gsoLastRk = Game.Timer()
+                        manualNum = 3 end
+                if manualNum > -1 and not gsoDelayedSpell[manualNum] then
+                        local drawMenu = _G.gsoSDK.Menu.gsodraw.circle1
+                        if _G.gsoSDK.Menu.orb.keys.combo:Value() or _G.gsoSDK.Menu.orb.keys.harass:Value() or _G.gsoSDK.Menu.orb.keys.lasthit:Value() or _G.gsoSDK.Menu.orb.keys.laneclear:Value() or _G.gsoSDK.Menu.orb.keys.flee:Value() then
+                                gsoDelayedSpell[manualNum] = {
+                                        function()
+                                                Control.KeyDown(wParam)
+                                                Control.KeyUp(wParam)
+                                                Control.KeyDown(wParam)
+                                                Control.KeyUp(wParam)
+                                                Control.KeyDown(wParam)
+                                                Control.KeyUp(wParam)
+                                        end,
+                                        Game.Timer()
+                                }
+                        end
+                end
+        end
+        
+        function __gsoSpell:CreateDrawMenu()
+                _G.gsoSDK.Menu.gsodraw:MenuElement({name = "Spell Ranges", id = "circle1", type = MENU,
+                        onclick = function()
+                                if self.spellDraw.q then
+                                        _G.gsoSDK.Menu.gsodraw.circle1.qrange:Hide(true)
+                                        _G.gsoSDK.Menu.gsodraw.circle1.qrangecolor:Hide(true)
+                                        _G.gsoSDK.Menu.gsodraw.circle1.qrangewidth:Hide(true)
+                                end
+                                if self.spellDraw.w then
+                                        _G.gsoSDK.Menu.gsodraw.circle1.wrange:Hide(true)
+                                        _G.gsoSDK.Menu.gsodraw.circle1.wrangecolor:Hide(true)
+                                        _G.gsoSDK.Menu.gsodraw.circle1.wrangewidth:Hide(true)
+                                end
+                                if self.spellDraw.e then
+                                        _G.gsoSDK.Menu.gsodraw.circle1.erange:Hide(true)
+                                        _G.gsoSDK.Menu.gsodraw.circle1.erangecolor:Hide(true)
+                                        _G.gsoSDK.Menu.gsodraw.circle1.erangewidth:Hide(true)
+                                end
+                                if self.spellDraw.r then
+                                        _G.gsoSDK.Menu.gsodraw.circle1.rrange:Hide(true)
+                                        _G.gsoSDK.Menu.gsodraw.circle1.rrangecolor:Hide(true)
+                                        _G.gsoSDK.Menu.gsodraw.circle1.rrangewidth:Hide(true)
+                                end
+                        end
+                })
+                if self.spellDraw.q then
+                        _G.gsoSDK.Menu.gsodraw.circle1:MenuElement({name = "Q Range", id = "note5", icon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/arrow.png", type = SPACE,
+                                onclick = function()
+                                        _G.gsoSDK.Menu.gsodraw.circle1.qrange:Hide()
+                                        _G.gsoSDK.Menu.gsodraw.circle1.qrangecolor:Hide()
+                                        _G.gsoSDK.Menu.gsodraw.circle1.qrangewidth:Hide()
+                                end
+                        })
+                        _G.gsoSDK.Menu.gsodraw.circle1:MenuElement({id = "qrange", name = "        Enabled", value = true})
+                        _G.gsoSDK.Menu.gsodraw.circle1:MenuElement({id = "qrangecolor", name = "        Color", color = Draw.Color(255, 66, 134, 244)})
+                        _G.gsoSDK.Menu.gsodraw.circle1:MenuElement({id = "qrangewidth", name = "        Width", value = 1, min = 1, max = 10})
+                end
+                if self.spellDraw.w then
+                        _G.gsoSDK.Menu.gsodraw.circle1:MenuElement({name = "W Range", id = "note6", icon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/arrow.png", type = SPACE,
+                                onclick = function()
+                                        _G.gsoSDK.Menu.gsodraw.circle1.wrange:Hide()
+                                        _G.gsoSDK.Menu.gsodraw.circle1.wrangecolor:Hide()
+                                        _G.gsoSDK.Menu.gsodraw.circle1.wrangewidth:Hide()
+                                end
+                        })
+                        _G.gsoSDK.Menu.gsodraw.circle1:MenuElement({id = "wrange", name = "        Enabled", value = true})
+                        _G.gsoSDK.Menu.gsodraw.circle1:MenuElement({id = "wrangecolor", name = "        Color", color = Draw.Color(255, 92, 66, 244)})
+                        _G.gsoSDK.Menu.gsodraw.circle1:MenuElement({id = "wrangewidth", name = "        Width", value = 1, min = 1, max = 10})
+                end
+                if self.spellDraw.e then
+                        _G.gsoSDK.Menu.gsodraw.circle1:MenuElement({name = "E Range", id = "note7", icon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/arrow.png", type = SPACE,
+                                onclick = function()
+                                        _G.gsoSDK.Menu.gsodraw.circle1.erange:Hide()
+                                        _G.gsoSDK.Menu.gsodraw.circle1.erangecolor:Hide()
+                                        _G.gsoSDK.Menu.gsodraw.circle1.erangewidth:Hide()
+                                end
+                        })
+                        _G.gsoSDK.Menu.gsodraw.circle1:MenuElement({id = "erange", name = "        Enabled", value = true})
+                        _G.gsoSDK.Menu.gsodraw.circle1:MenuElement({id = "erangecolor", name = "        Color", color = Draw.Color(255, 66, 244, 149)})
+                        _G.gsoSDK.Menu.gsodraw.circle1:MenuElement({id = "erangewidth", name = "        Width", value = 1, min = 1, max = 10})
+                end
+                if self.spellDraw.r then
+                        _G.gsoSDK.Menu.gsodraw.circle1:MenuElement({name = "R Range", id = "note8", icon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/arrow.png", type = SPACE,
+                                onclick = function()
+                                        _G.gsoSDK.Menu.gsodraw.circle1.rrange:Hide()
+                                        _G.gsoSDK.Menu.gsodraw.circle1.rrangecolor:Hide()
+                                        _G.gsoSDK.Menu.gsodraw.circle1.rrangewidth:Hide()
+                                end
+                        })
+                        _G.gsoSDK.Menu.gsodraw.circle1:MenuElement({id = "rrange", name = "        Enabled", value = true})
+                        _G.gsoSDK.Menu.gsodraw.circle1:MenuElement({id = "rrangecolor", name = "        Color", color = Draw.Color(255, 244, 182, 66)})
+                        _G.gsoSDK.Menu.gsodraw.circle1:MenuElement({id = "rrangewidth", name = "        Width", value = 1, min = 1, max = 10})
+                end
+        end
+        
+        function __gsoSpell:Draw()
+                local drawMenu = _G.gsoSDK.Menu.gsodraw.circle1
+                if self.spellDraw.q and drawMenu.qrange:Value() then
+                        local qrange = self.spellDraw.qf and self.spellDraw.qf() or self.spellDraw.qr
+                        Draw.Circle(myHero.pos, qrange, drawMenu.qrangewidth:Value(), drawMenu.qrangecolor:Value())
+                end
+                if self.spellDraw.w and drawMenu.wrange:Value() then
+                        local wrange = self.spellDraw.wf and self.spellDraw.wf() or self.spellDraw.wr
+                        Draw.Circle(myHero.pos, wrange, drawMenu.wrangewidth:Value(), drawMenu.wrangecolor:Value())
+                end
+                if self.spellDraw.e and drawMenu.erange:Value() then
+                        local erange = self.spellDraw.ef and self.spellDraw.ef() or self.spellDraw.er
+                        Draw.Circle(myHero.pos, erange, drawMenu.erangewidth:Value(), drawMenu.erangecolor:Value())
+                end
+                if self.spellDraw.r and drawMenu.rrange:Value() then
+                        local rrange = self.spellDraw.rf and self.spellDraw.rf() or self.spellDraw.rr
+                        Draw.Circle(myHero.pos, rrange, drawMenu.rrangewidth:Value(), drawMenu.rrangecolor:Value())
+                end
         end

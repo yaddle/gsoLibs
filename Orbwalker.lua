@@ -72,11 +72,29 @@ local function gsoCheckTeemoBlind()
         return false
 end
 
+local function gsoCanAttack()
+        return true
+end
+
+local function gsoCanMove()
+        return true
+end
+
 class "__gsoOrbwalker"
         
         function __gsoOrbwalker:__init()
                 self.Loaded = false
+                self.SpellMoveDelays = { q = 0, w = 0, e = 0, r = 0 }
+                self.SpellAttackDelays = { q = 0, w = 0, e = 0, r = 0 }
                 _G.gsoSDK.ObjectManager:OnEnemyHeroLoad(function(hero) if hero.charName == "Teemo" then gsoIsTeemo = true end end)
+        end
+        
+        function __gsoOrbwalker:SetSpellMoveDelays(delays)
+                self.SpellMoveDelays = delays
+        end
+        
+        function __gsoOrbwalker:SetSpellAttackDelays(delays)
+                self.SpellAttackDelays = delays
         end
         
         function __gsoOrbwalker:GetLastMovePos()
@@ -170,18 +188,30 @@ class "__gsoOrbwalker"
                         self:DisableIcOrb()
                         self:DisableGosOrb()
                         self:EnableGamsteronOrb()
-                elseif gsoMainMenu.orbsel:Value() == 2 then
-                        self:DisableIcOrb()
-                        self:EnableGosOrb()
-                        self:DisableGamsteronOrb()
-                elseif gsoMainMenu.orbsel:Value() == 3 then
-                        if not _G.SDK or not _G.SDK.Orbwalker then
-                                print("To use IC's Orbwalker you need load it !")
-                                gsoMainMenu.orbsel:Value(1)
+                else
+                        if _G.gsoSDK.Spell:CheckSpellDelays(self.SpellMoveDelays) then
+                                self:UOL_SetMovement(true)
                         else
-                                self:EnableIcOrb()
-                                self:DisableGosOrb()
+                                self:UOL_SetMovement(false)
+                        end
+                        if _G.gsoSDK.Spell:CheckSpellDelays(self.SpellAttackDelays) then
+                                self:UOL_SetAttack(true)
+                        else
+                                self:UOL_SetAttack(false)
+                        end
+                        if gsoMainMenu.orbsel:Value() == 2 then
+                                self:DisableIcOrb()
+                                self:EnableGosOrb()
                                 self:DisableGamsteronOrb()
+                        elseif gsoMainMenu.orbsel:Value() == 3 then
+                                if not _G.SDK or not _G.SDK.Orbwalker then
+                                        print("To use IC's Orbwalker you need load it !")
+                                        gsoMainMenu.orbsel:Value(1)
+                                else
+                                        self:EnableIcOrb()
+                                        self:DisableGosOrb()
+                                        self:DisableGamsteronOrb()
+                                end
                         end
                 end
         end
@@ -334,6 +364,14 @@ class "__gsoOrbwalker"
         ------------------------------------------------------------
         ------------------------------------------------------------
         
+        function __gsoOrbwalker:CanAttackEvent(func)
+                gsoCanAttack = func
+        end
+        
+        function __gsoOrbwalker:CanMoveEvent(func)
+                gsoCanMove = func
+        end
+        
         function __gsoOrbwalker:Attack(unit)
                 gsoResetAttack = false
                 _G.gsoSDK.Cursor:SetCursor(cursorPos, unit.pos, 0.06)
@@ -365,6 +403,8 @@ class "__gsoOrbwalker"
         end
         
         function __gsoOrbwalker:CanAttack()
+                if not gsoCanAttack() then return false end
+                if not _G.gsoSDK.Spell:CheckSpellDelays(self.SpellAttackDelays) then return false end
                 if gsoIsBlindedByTeemo then
                         return false
                 end
@@ -379,6 +419,8 @@ class "__gsoOrbwalker"
         end
         
         function __gsoOrbwalker:CanMove()
+                if not gsoCanMove() then return false end
+                if not _G.gsoSDK.Spell:CheckSpellDelays(self.SpellMoveDelays) then return false end
                 local latency = math.min(_G.gsoSDK.Utilities:GetMinLatency(), Game.Latency() * 0.001) * 0.75
                 latency = math.min(latency, _G.gsoSDK.Utilities:GetUserLatency())
                 local windUpDelay = gsoMenu.windupdelay:Value() * 0.001
