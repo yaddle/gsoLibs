@@ -38,8 +38,9 @@ class "__gsoLibLoader"
                         print("gsoLibs - No Updates Found.")
                 end
                 -- HPred Prediction
-                if not _G.gsoSDK.AutoUpdate:FileExists(COMMON_PATH.."HPred.lua") then
+                if not _G.gsoSDK.AutoUpdate:FileExists(COMMON_PATH.."HPred.lua") or not _G.gsoSDK.AutoUpdate:FileExists(COMMON_PATH.."gsoLibs\\Libs.version") then
                         _G.gsoSDK.AutoUpdate:Update(COMMON_PATH .. "HPred.lua", "https://raw.githubusercontent.com/Sikaka/GOSExternal/master/HPred.lua", false, false, false)
+                        _G.gsoSDK.AutoUpdate:Update(COMMON_PATH .. "gsoLibs\\Libs.version", "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/Libs.version", false, false, false)
                 end
                 -- TRUS Prediction
                 if not _G.gsoSDK.AutoUpdate:FileExists(COMMON_PATH.."TPred.lua") then
@@ -50,7 +51,7 @@ class "__gsoLibLoader"
                         _G.gsoSDK.AutoUpdate:Update(SCRIPT_PATH .. "Orbwalker.lua", "https://raw.githubusercontent.com/jachicao/GoS/master/src/Orbwalker.lua", false, false, false)
                 end
                 -- update all libs
-                if _G.gsoSDK.AutoUpdate:CanUpdate(0.01, "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/Libs.version") then
+                if _G.gsoSDK.AutoUpdate:CanUpdate(assert(tonumber(gsoReadFile(COMMON_PATH .. "gsoLibs\\Libs.version"))), "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/Libs.version") then
                         _G.gsoSDK.AutoUpdate:Update(COMMON_PATH .. "HPred.lua", "https://raw.githubusercontent.com/Sikaka/GOSExternal/master/HPred.lua", false, false, false)
                         _G.gsoSDK.AutoUpdate:Update(COMMON_PATH .. "TPred.lua", "https://raw.githubusercontent.com/Vasilyi/gamingonsteroids/master/Common/TPred.lua", false, false, false)
                         _G.gsoSDK.AutoUpdate:Update(SCRIPT_PATH .. "Orbwalker.lua", "https://raw.githubusercontent.com/jachicao/GoS/master/src/Orbwalker.lua", false, false, false)
