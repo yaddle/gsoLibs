@@ -16,6 +16,8 @@ class "__gsoLibLoader"
                 self.menu = menu
                 _G.gsoTicks = { All = true, ObjectManager = true, Utilities = true, Cursor = true,  Farm = true, Noddy = true }
                 _G.gsoDraws = { All = true, Spell = true, Cursor = true, TargetSelector = true }
+                -- update due github delays. In 30 minutes these lines will be removed
+                _G.gsoSDK.AutoUpdate:Update(COMMON_PATH .. "HPred.lua", "https://raw.githubusercontent.com/Sikaka/GOSExternal/master/HPred.lua", false, false, false)
                 _G.gsoSDK.AutoUpdate:Update(COMMON_PATH .. "gsoLibs\\Prediction.lua", "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/Prediction.lua", false, false, false)
                 if not gsoFileExist(COMMON_PATH.."gsoLibs\\gsoSDK.version") or _G.gsoSDK.AutoUpdate:CanUpdate(assert(tonumber(gsoReadFile(COMMON_PATH .. "gsoLibs\\gsoSDK.version"))), "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/gsoSDK.version") then
                         _G.gsoSDK.AutoUpdate:Update(COMMON_PATH .. "gsoLibs\\gsoSDK.version", "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/gsoSDK.version", false, false, false)
@@ -35,12 +37,22 @@ class "__gsoLibLoader"
                 else
                         print("gsoLibs - No Updates Found.")
                 end
+                -- HPred Prediction
+                if not _G.gsoSDK.AutoUpdate:FileExists(COMMON_PATH.."HPred.lua") then
+                        _G.gsoSDK.AutoUpdate:Update(COMMON_PATH .. "HPred.lua", "https://raw.githubusercontent.com/Sikaka/GOSExternal/master/HPred.lua", false, false, false)
+                end
                 -- TRUS Prediction
                 if not _G.gsoSDK.AutoUpdate:FileExists(COMMON_PATH.."TPred.lua") then
                         _G.gsoSDK.AutoUpdate:Update(COMMON_PATH .. "TPred.lua", "https://raw.githubusercontent.com/Vasilyi/gamingonsteroids/master/Common/TPred.lua", false, false, false)
                 end
                 -- evitaerCi Orbwalker
                 if not _G.gsoSDK.AutoUpdate:FileExists(SCRIPT_PATH .. "Orbwalker.lua") then
+                        _G.gsoSDK.AutoUpdate:Update(SCRIPT_PATH .. "Orbwalker.lua", "https://raw.githubusercontent.com/jachicao/GoS/master/src/Orbwalker.lua", false, false, false)
+                end
+                -- update all libs
+                if _G.gsoSDK.AutoUpdate:CanUpdate(0.01, "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/Libs.version") then
+                        _G.gsoSDK.AutoUpdate:Update(COMMON_PATH .. "HPred.lua", "https://raw.githubusercontent.com/Sikaka/GOSExternal/master/HPred.lua", false, false, false)
+                        _G.gsoSDK.AutoUpdate:Update(COMMON_PATH .. "TPred.lua", "https://raw.githubusercontent.com/Vasilyi/gamingonsteroids/master/Common/TPred.lua", false, false, false)
                         _G.gsoSDK.AutoUpdate:Update(SCRIPT_PATH .. "Orbwalker.lua", "https://raw.githubusercontent.com/jachicao/GoS/master/src/Orbwalker.lua", false, false, false)
                 end
                 self.selmenu = MenuElement({name = "Orbwalker & Prediction", id = "gsoorbsel", type = MENU, leftIcon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/seliconjs7sdq.png" })
