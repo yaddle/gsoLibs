@@ -62,6 +62,14 @@ class "__gsoSpell"
                         self.spellDraw = { q = true, qr = 1075, w = true, wr = 600, e = true, ef = function() local eLvl = myHero:GetSpellData(_E).level; if eLvl == 0 then return 3000 else return 2000 + 1000 * eLvl end end, r = true, rr = 1500 }
                 elseif myHero.charName == "Azir" then
                         self.spellDraw = { q = true, qr = 740, w = true, wr = 500, e = true, er = 1100, r = true, rr = 250 }
+                elseif myHero.charName == "Bard" then
+                        self.spellDraw = { q = true, qr = 950, w = true, wr = 800, e = true, er = 900, r = true, rr = 3400 }
+                elseif myHero.charName == "Blitzcrank" then
+                        self.spellDraw = { q = true, qr = 925, e = true, er = 300, r = true, rr = 600 }
+                elseif myHero.charName == "Brand" then
+                        self.spellDraw = { q = true, qr = 1050, w = true, wr = 900, e = true, er = 625 + 120, r = true, rr = 750 + 120 }
+                elseif myHero.charName == "Braum" then
+                        self.spellDraw = { q = true, qr = 1000, w = true, wr = 650 + 120, r = true, rr = 1250 }
                 elseif myHero.charName == "Twitch" then
                         self.spellDraw = { w = true, wr = 950, e = true, er = 1200, r = true, rf = function() return myHero.range + 300 + ( myHero.boundingRadius * 2 ) end }
                 elseif myHero.charName == "Caitlyn" then
