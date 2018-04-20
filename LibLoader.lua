@@ -44,7 +44,7 @@ class "__gsoLibLoader"
                 end
                 self.selmenu = MenuElement({name = "Orbwalker & Prediction", id = "gsoorbsel", type = MENU, leftIcon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/seliconjs7sdq.png" })
                 self.selmenu:MenuElement({ id = "orbsel", name = "Orbwalker", value = 1, drop = { "Gamsteron", "GOS", "IC" } })
-                self.selmenu:MenuElement({ id = "predsel", name = "Prediction", value = 1, drop = { "Noddy", "Trus", "gamsteron - not ready yet" } })
+                self.selmenu:MenuElement({ id = "predsel", name = "Prediction", value = 1, drop = { "Noddy Pred", "Trus TPred", "Sikaka HPred - not ready yet", "Gamsteron Pred - not ready yet" } })
                 -- LOAD LIBS
                 require "gsoLibs\\Spell"
                 _G.gsoSDK.Spell = __gsoSpell()
@@ -72,6 +72,7 @@ class "__gsoLibLoader"
                 _G.gsoSDK.Cursor:CreateDrawMenu(menu.gsodraw)
                 _G.gsoSDK.Orbwalker:CreateDrawMenu(menu.gsodraw)
                 Callback.Add('Tick', function()
+                        _G.gsoSDK.Prediction:Tick()
                         if self.selmenu.orbsel:Value() == 1 then
                                 _G.gsoSDK.ObjectManager:Tick()
                                 _G.gsoSDK.Utilities:Tick()

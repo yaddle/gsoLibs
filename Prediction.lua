@@ -78,6 +78,25 @@ class "__gsoPrediction"
         function __gsoPrediction:__init(menu)
                 self.menu = menu
                 require "TPred"
+                self.selectedPred = self.menu.predsel:Value()
+                if self.selectedPred == 3 then require "HPred"; print("HPred Loaded") end
+        end
+        
+        function __gsoPrediction:Tick()
+                if self.selectedPred ~= 1 and self.menu.predsel:Value() == 1 then
+                      print("Noddy - Please press 2x F6 to unload HPred - for better performance")
+                      self.selectedPred = 1
+                elseif self.selectedPred ~= 2 and self.menu.predsel:Value() == 2 then
+                      print("Trus - Please press 2x F6 to unload HPred - for better performance")
+                      self.selectedPred = 2
+                elseif self.selectedPred ~= 3 and self.menu.predsel:Value() == 3 then
+                      require "HPred"
+                      self.selectedPred = 3
+                      print("Sikaka HPred")
+                elseif self.selectedPred ~= 4 and self.menu.predsel:Value() == 4 then
+                      print("Gamsteron - Please press 2x F6 to unload HPred - for better performance")
+                      self.selectedPred = 4
+                end
         end
         
         function __gsoPrediction:UPL_GetPrediction(unit, delay, radius, range, speed, from, collision, sType)
@@ -90,10 +109,18 @@ class "__gsoPrediction"
                         if collision and unit:GetCollision(radius,speed, delay) > 0 then return -1, nil end
                         return 10, castpos
                 elseif self.menu.predsel:Value() == 2 then
+                        if not TPred then return -1, nil end
                         local CastPosition, HitChance, Position = TPred:GetBestCastPosition(unit, delay, radius, range, speed, from, false, sType)
                         if not CastPosition or HitChance < 1 then return -1, nil end
                         if Vector(CastPosition):DistanceTo(Vector(from)) > range - 35 then return -1, nil end
                         if collision and unit:GetCollision(radius,speed, delay) > 0 then return -1, nil end
                         return HitChance, CastPosition
+                elseif self.menu.predsel:Value() == 3 then
+                        if not HPred then return -1, nil end
+                        --[[local CastPosition, HitChance, Position = HPred:GetBestCastPosition(unit, delay, radius, range, speed, from, false, sType)
+                        if not CastPosition or HitChance < 1 then return -1, nil end
+                        if Vector(CastPosition):DistanceTo(Vector(from)) > range - 35 then return -1, nil end
+                        if collision and unit:GetCollision(radius,speed, delay) > 0 then return -1, nil end
+                        return HitChance, CastPosition--]]
                 end
         end
