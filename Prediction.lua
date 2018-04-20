@@ -78,8 +78,9 @@ class "__gsoPrediction"
         function __gsoPrediction:__init(menu)
                 self.menu = menu
                 require "TPred"
+                self.hpredloaded = false
                 self.selectedPred = self.menu.predsel:Value()
-                if self.selectedPred == 3 then require "HPred"; print("HPred Loaded") end
+                if self.selectedPred == 3 then require "HPred"; self.hpredloaded = true end
         end
         
         function __gsoPrediction:Tick()
@@ -89,10 +90,11 @@ class "__gsoPrediction"
                 elseif self.selectedPred ~= 2 and self.menu.predsel:Value() == 2 then
                       print("Trus - Please press 2x F6 to unload HPred - for better performance")
                       self.selectedPred = 2
-                elseif self.selectedPred ~= 3 and self.menu.predsel:Value() == 3 then
+                elseif self.selectedPred ~= 3 and not self.hpredloaded and self.menu.predsel:Value() == 3 then
                       require "HPred"
                       self.selectedPred = 3
                       print("Sikaka HPred")
+                      self.hpredloaded = true
                 elseif self.selectedPred ~= 4 and self.menu.predsel:Value() == 4 then
                       print("Gamsteron - Please press 2x F6 to unload HPred - for better performance")
                       self.selectedPred = 4
