@@ -16,8 +16,8 @@ class "__gsoTwitch"
                 self.menu = MenuElement({name = "Gamsteron Twitch", id = "gsotwitch", type = MENU, leftIcon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/twitch.png" })
                 require "gsoLibs\\gsoSDK"
                 __gsoSDK(self.menu)
-                if _G.gsoSDK.AutoUpdate:CanUpdate(0.01, "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Twitch/gsoTwitch.version") then
-                        _G.gsoSDK.AutoUpdate:Update(SCRIPT_PATH .. "gsoTwitch.lua", "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Twitch/gsoTwitch.lua", true, false, true)
+                if _G.gsoSDK.AutoUpdate:CanUpdate(0.01, "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/GamsteronAIO/Twitch/gsoTwitch.version") then
+                        _G.gsoSDK.AutoUpdate:Update(SCRIPT_PATH .. "gsoTwitch.lua", "https://raw.githubusercontent.com/gamsteron/gsoLibs/master/GamsteronAIO/Twitch/gsoTwitch.lua", true, false, true)
                 else
                         print("gsoTwitch - No Updates Found.")
                 end
