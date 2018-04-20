@@ -84,18 +84,18 @@ class "__gsoPrediction"
         end
         
         function __gsoPrediction:Tick()
-                if self.selectedPred ~= 1 and self.hpredloaded and self.menu.predsel:Value() == 1 then
+                if self.hpredloaded and self.selectedPred ~= 1 and self.menu.predsel:Value() == 1 then
                       print("Noddy - Please press 2x F6 to unload HPred - for better performance")
                       self.selectedPred = 1
-                elseif self.selectedPred ~= 2 and self.hpredloaded and self.menu.predsel:Value() == 2 then
+                elseif self.hpredloaded and self.selectedPred ~= 2 and self.menu.predsel:Value() == 2 then
                       print("Trus - Please press 2x F6 to unload HPred - for better performance")
                       self.selectedPred = 2
-                elseif self.selectedPred ~= 3 and not self.hpredloaded and self.menu.predsel:Value() == 3 then
+                elseif not self.hpredloaded and self.selectedPred ~= 3 and self.menu.predsel:Value() == 3 then
                       require "HPred"
                       self.selectedPred = 3
                       print("Sikaka HPred")
                       self.hpredloaded = true
-                elseif self.selectedPred ~= 4 and self.hpredloaded and self.menu.predsel:Value() == 4 then
+                elseif self.hpredloaded and self.selectedPred ~= 4 and self.menu.predsel:Value() == 4 then
                       print("Gamsteron - Please press 2x F6 to unload HPred - for better performance")
                       self.selectedPred = 4
                 end
