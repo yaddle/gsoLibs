@@ -119,10 +119,10 @@ class "__gsoPrediction"
                         return HitChance, CastPosition
                 elseif self.menu.predsel:Value() == 3 then
                         if not HPred then return -1, nil end
-                        --[[local CastPosition, HitChance, Position = HPred:GetBestCastPosition(unit, delay, radius, range, speed, from, false, sType)
+                        local HitChance, CastPosition = HPred:GetHitchance(from, unit, range, delay, speed, radius, collision)
                         if not CastPosition or HitChance < 1 then return -1, nil end
                         if Vector(CastPosition):DistanceTo(Vector(from)) > range - 35 then return -1, nil end
                         if collision and unit:GetCollision(radius,speed, delay) > 0 then return -1, nil end
-                        return HitChance, CastPosition--]]
+                        return HitChance, CastPosition
                 end
         end
