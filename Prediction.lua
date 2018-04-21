@@ -79,25 +79,30 @@ class "__gsoPrediction"
                 self.menu = menu
                 require "TPred"
                 self.hpredloaded = false
+                if not _G.gsoTicks.All or not _G.gsoTicks.HPred then self.menu.predsel:Value(2) end
                 self.selectedPred = self.menu.predsel:Value()
-                if self.selectedPred == 3 then require "HPred"; self.hpredloaded = true end
+                if _G.gsoTicks.HPred and _G.gsoTicks.All and self.selectedPred == 3 then require "HPred"; self.hpredloaded = true end
         end
         
         function __gsoPrediction:Tick()
                 if self.hpredloaded and self.selectedPred ~= 1 and self.menu.predsel:Value() == 1 then
-                      print("Noddy - Please press 2x F6 to unload HPred - for better performance")
-                      self.selectedPred = 1
+                        print("Noddy - Please press 2x F6 to unload HPred - for better performance")
+                        self.selectedPred = 1
                 elseif self.hpredloaded and self.selectedPred ~= 2 and self.menu.predsel:Value() == 2 then
-                      print("Trus - Please press 2x F6 to unload HPred - for better performance")
-                      self.selectedPred = 2
-                elseif not self.hpredloaded and self.selectedPred ~= 3 and self.menu.predsel:Value() == 3 then
-                      require "HPred"
-                      self.selectedPred = 3
-                      print("Sikaka HPred")
-                      self.hpredloaded = true
+                        print("Trus - Please press 2x F6 to unload HPred - for better performance")
+                        self.selectedPred = 2
+                elseif not self.hpredloaded and _G.gsoTicks.HPred and _G.gsoTicks.All and self.selectedPred ~= 3 and self.menu.predsel:Value() == 3 then
+                        require "HPred"
+                        self.selectedPred = 3
+                        print("Sikaka HPred")
+                        self.hpredloaded = true
                 elseif self.hpredloaded and self.selectedPred ~= 4 and self.menu.predsel:Value() == 4 then
-                      print("Gamsteron - Please press 2x F6 to unload HPred - for better performance")
-                      self.selectedPred = 4
+                        print("Gamsteron - Please press 2x F6 to unload HPred - for better performance")
+                        self.selectedPred = 4
+                elseif self.menu.predsel:Value() == 3 then
+                        if not _G.gsoTicks.All or not _G.gsoTicks.HPred then
+                                self.menu.predsel:Value(2)
+                        end
                 end
         end
         

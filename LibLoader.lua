@@ -14,8 +14,12 @@ class "__gsoLibLoader"
         
         function __gsoLibLoader:__init(menu)
                 self.menu = menu
-                _G.gsoTicks = { All = true, ObjectManager = true, Utilities = true, Cursor = true,  Farm = true, Noddy = true }
-                _G.gsoDraws = { All = true, Spell = true, Cursor = true, TargetSelector = true }
+                if not _G.gsoTicks then
+                        _G.gsoTicks = { All = true, ObjectManager = true, Utilities = true, Cursor = true,  Farm = true, Noddy = true, HPred = true }
+                end
+                if not _G.gsoDraws then
+                        _G.gsoDraws = { All = true, Spell = true, Cursor = true, TargetSelector = true }
+                end
                 -- update due github delays - START
                 -- ...
                  -- update due github delays - END
