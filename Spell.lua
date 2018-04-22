@@ -96,6 +96,24 @@ class "__gsoSpell"
                         self.spellDraw = { q = true, qr = 800, w = true, wf = function() local wLvl = myHero:GetSpellData(_W).level; if wLvl == 0 then return 1200 else return 1100 + 100 * wLvl end end, e = true, er = 210, r = true, rr = 450 }
                 elseif myHero.charName == "Ezreal" then
                         self.spellDraw = { q = true, qr = 1150, w = true, wr = 1000, e = true, er = 475 }
+                elseif myHero.charName == "Fiddlesticks" then
+                        self.spellDraw = { q = true, qr = 575 + 120, w = true, wr = 650, e = true, er = 750 + 120, r = true, rr = 800 }
+                elseif myHero.charName == "Fiora" then
+                        self.spellDraw = { q = true, qr = 400, w = true, wr = 750, r = true, rr = 500 + 120 }
+                elseif myHero.charName == "Fizz" then
+                        self.spellDraw = { q = true, qr = 550 + 120, e = true, er = 400, r = true, rr = 1300 }
+                elseif myHero.charName == "Galio" then
+                        self.spellDraw = { q = true, qr = 825, w = true, wr = 350, e = true, er = 650, r = true, rf = function() local rLvl = myHero:GetSpellData(_R).level; if rLvl == 0 then return 4000 else return 3250 + 750 * rLvl end end }
+                elseif myHero.charName == "Gangplank" then
+                        self.spellDraw = { q = true, qr = 625 + 120, w = true, wr = 650, e = true, er = 1000 }
+                elseif myHero.charName == "Garen" then
+                        self.spellDraw = { e = true, er = 325, r = true, rr = 400 + 120 }
+                elseif myHero.charName == "Gnar" then
+                        self.spellDraw = { q = true, qr = 1100, r = true, rr = 475, w = false, e = false } -- wr (mega gnar) = 550, er (mini gnar) = 475, er (mega gnar) = 600
+                elseif myHero.charName == "Gragas" then
+                        self.spellDraw = { q = true, qr = 850, e = true, er = 600, r = true, rr = 1000 }
+                elseif myHero.charName == "Graves" then
+                        self.spellDraw = { q = true, qr = 925, w = true, wr = 950, e = true, er = 475, r = true, rr = 1000 }
                 elseif myHero.charName == "Twitch" then
                         self.spellDraw = { w = true, wr = 950, e = true, er = 1200, r = true, rf = function() return myHero.range + 300 + ( myHero.boundingRadius * 2 ) end }
                 elseif myHero.charName == "Jhin" then
