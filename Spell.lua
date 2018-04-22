@@ -114,6 +114,16 @@ class "__gsoSpell"
                         self.spellDraw = { q = true, qr = 850, e = true, er = 600, r = true, rr = 1000 }
                 elseif myHero.charName == "Graves" then
                         self.spellDraw = { q = true, qr = 925, w = true, wr = 950, e = true, er = 475, r = true, rr = 1000 }
+                elseif myHero.charName == "Hecarim" then
+                        self.spellDraw = { q = true, qr = 350, w = true, wr = 575 + 120, r = true, rr = 1000 }
+                elseif myHero.charName == "Heimerdinger" then
+                        self.spellDraw = { q = false, w = true, wr = 1325, e = true, er = 970 } --  qr (noR) = 350, wr (R) = 450
+                elseif myHero.charName == "Illaoi" then
+                        self.spellDraw = { q = true, qr = 850, w = true, wr = 350 + 120, e = true, er = 900, r = true, rr = 450 }
+                elseif myHero.charName == "Irelia" then
+                        self.spellDraw = { q = true, qr = 625 + 120, w = true, wr = 825, e = true, er = 900, r = true, rr = 1000 }
+                elseif myHero.charName == "Ivern" then
+                        self.spellDraw = { q = true, qr = 1075, w = true, wr = 1000, e = true, er = 750 + 120 }
                 elseif myHero.charName == "Twitch" then
                         self.spellDraw = { w = true, wr = 950, e = true, er = 1200, r = true, rf = function() return myHero.range + 300 + ( myHero.boundingRadius * 2 ) end }
                 elseif myHero.charName == "Jhin" then
