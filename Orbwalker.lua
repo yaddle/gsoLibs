@@ -39,6 +39,7 @@ local gsoNoAttacks = {
 local gsoAttacks = {
     ["caitlynheadshotmissile"] = true,
     ["quinnwenhanced"] = true,
+    ["kennenmegaproc"] = true,
     ["viktorqbuff"] = true
 }
 
